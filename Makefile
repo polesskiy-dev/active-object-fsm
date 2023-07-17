@@ -39,6 +39,11 @@ clean:
 	rm -rf $(BUILD_DIR) $(BIN_DIR)
 	# Remove the $(BUILD_DIR) and $(BIN_DIR) directories along with their contents
 
+# Run the main executable
+run: $(TARGET)
+	$(TARGET)
+	# Run the $(TARGET) executable	
+
 # Phony targets
 .PHONY: all clean
 	# Mark the targets 'all' and 'clean' as phony targets
