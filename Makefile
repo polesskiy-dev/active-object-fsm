@@ -2,16 +2,20 @@
 CC = gcc
 
 # Compiler flags
-CFLAGS = -Wall -Wextra -Werror -std=c11
+CFLAGS = -Wall -Wextra -Werror -std=c11 -IUnity/src -Isrc
 
 # Directories
 SRC_DIR = src
+TEST_LIB_DIR = Unity/src
 BUILD_DIR = build
 BIN_DIR = bin
 
 # Source files
-SRCS = $(wildcard $(SRC_DIR)/**/*.c) $(wildcard $(SRC_DIR)/*.c)
+SRCS = $(wildcard $(SRC_DIR)/*.c)
+SRCS += $(wildcard $(SRC_DIR)/**/*.c)
+UNITY_SRCS = $(wildcard $(TEST_LIB_DIR)/*.c)
 OBJS = $(patsubst $(SRC_DIR)/%.c, $(BUILD_DIR)/%.o, $(SRCS))
+UNITY_OBJS = $(patsubst $(TEST_LIB_DIR)/%.c, $(BUILD_DIR)/%.o, $(UNITY_SRCS))
 
 # Target executable
 TARGET = $(BIN_DIR)/active-object-fsm
@@ -21,17 +25,24 @@ all: $(TARGET)
 	# The default target is to build the $(TARGET) executable
 
 # Rule to build the target
-$(TARGET): $(OBJS)
+$(TARGET): $(OBJS) $(UNITY_OBJS)
 	@mkdir -p $(BIN_DIR)
 	$(CC) $(CFLAGS) $^ -o $@
-	# Build the $(TARGET) executable by linking the $(OBJS) object files
+	# Build the $(TARGET) executable by linking the $(OBJS) and $(UNITY_OBJS) object files
 	# Create the $(BIN_DIR) directory if it doesn't exist
 
-# Rule to compile source files
+# Rule to compile source files from src/ directory
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
 	@mkdir -p $(@D)
 	$(CC) $(CFLAGS) -c $< -o $@
-	# Compile each source file to its corresponding object file in the $(BUILD_DIR)
+	# Compile each source file from src/ directory to its corresponding object file in the $(BUILD_DIR)
+	# Create the necessary subdirectories in the $(BUILD_DIR) if they don't exist
+
+# Rule to compile source files from Unity/src/ directory
+$(BUILD_DIR)/%.o: $(TEST_LIB_DIR)/%.c
+	@mkdir -p $(@D)
+	$(CC) $(CFLAGS) -c $< -o $@
+	# Compile each source file from Unity/src/ directory to its corresponding object file in the $(BUILD_DIR)
 	# Create the necessary subdirectories in the $(BUILD_DIR) if they don't exist
 
 # Clean the build files
@@ -39,8 +50,14 @@ clean:
 	rm -rf $(BUILD_DIR) $(BIN_DIR)
 	# Remove the $(BUILD_DIR) and $(BIN_DIR) directories along with their contents
 
+# TODO remove it
 # Run the main executable
 run: $(TARGET)
+	$(TARGET)
+	# Run the $(TARGET) executable
+
+# Run the main executable
+test: $(TARGET)
 	$(TARGET)
 	# Run the $(TARGET) executable	
 
