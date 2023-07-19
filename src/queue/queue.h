@@ -14,21 +14,20 @@
  *
  * @description This queue implementation is based on a circular queue, also known as a circular buffer.
  * It utilizes a fixed-size array and employs the concept of wrapping around the indices to achieve a circular behavior.
- * The circular nature allows efficient utilization of space without wasting memory. 
- * All operations take O(1).
+ * The circular nature allows efficient utilization of space without wasting memory.
  */
 #define DECLARE_QUEUE(type) \
     typedef struct { \
         int8_t front; \
         int8_t rear; \
         type elements[QUEUE_MAX_CAPACITY]; \
-    } QUEUE_ ##type; \
+    } QUEUE_##type; \
     \
     /**
      * @brief Initialize the queue.
      *
      * @param q Pointer to the queue to be initialized.
-     */
+     */ \
     void QUEUE_##type##_Init(QUEUE_##type *q) { \
         q->front = -1; \
         q->rear = -1; \
@@ -39,7 +38,7 @@
      *
      * @param q Pointer to the queue.
      * @param item The item to be enqueued.
-     */
+     */ \
     void QUEUE_##type##_Enqueue(QUEUE_##type *q, type item) { \
         if (((q->rear + 1) % QUEUE_MAX_CAPACITY) == q->front) { \
             printf("Queue is full. Cannot enqueue.\n"); \
@@ -58,7 +57,7 @@
      *
      * @param q Pointer to the queue.
      * @return The dequeued item.
-     */
+     */ \
     type QUEUE_##type##_Dequeue(QUEUE_##type *q) { \
         if (q->front == -1) { \
             printf("Queue is empty. Cannot dequeue.\n"); \
@@ -81,7 +80,7 @@
      *
      * @param q Pointer to the queue.
      * @return The current size of the queue.
-     */
+     */ \
     int QUEUE_##type##_GetSize(QUEUE_##type *q) { \
         if (q->front == -1) { \
             return 0; \
@@ -99,7 +98,7 @@
      *
      * @param q Pointer to the queue.
      * @return The element at the front of the queue.
-     */
+     */ \
     type QUEUE_##type##_Peek(QUEUE_##type *q) { \
         if (q->front == -1) { \
             printf("Queue is empty. Cannot peek.\n"); \

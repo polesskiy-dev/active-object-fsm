@@ -1,7 +1,7 @@
 #include "unity.h"
 #include "queue/queue.h"
 
-DECLARE_QUEUE(int)
+DECLARE_QUEUE(int) ;
 
 void setUp(void) {
     // Set up any necessary resources before each test
@@ -79,10 +79,11 @@ void test_QueueEmpty(void) {
 int main(void) {
     UNITY_BEGIN();
 
-    // Run the tests
+    //  Run the tests
     RUN_TEST(test_QueueEnqueueDequeue);
     RUN_TEST(test_QueueFull);
     RUN_TEST(test_QueueEmpty);
 
     return UNITY_END();
+    return 0;
 }
