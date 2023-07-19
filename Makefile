@@ -56,10 +56,9 @@ run: $(TARGET)
 	$(TARGET)
 	# Run the $(TARGET) executable
 
-# Run the main executable
+# Run tests
 test: $(TARGET)
 	$(TARGET)
-	# Run the $(TARGET) executable	
 
 # Phony targets
 .PHONY: all clean
