@@ -2,11 +2,11 @@
 CC = gcc
 
 # Compiler flags
-CFLAGS = -Wall -Wextra -Werror -std=c11 -IUnity/src -Isrc
+CFLAGS = -Wall -Wextra -Werror -std=c11 -Ilibraries/Unity/src -Isrc
 
 # Directories
 SRC_DIR = src
-TEST_LIB_DIR = Unity/src
+TEST_LIB_DIR = libraries/Unity/src
 BUILD_DIR = build
 BIN_DIR = bin
 
