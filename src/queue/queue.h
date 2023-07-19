@@ -7,6 +7,16 @@
 
 #define QUEUE_MAX_CAPACITY 16 // should always be a power of 2
 
+/**
+ * @brief Declare a queue template for a given data type.
+ *
+ * @param type The data type for the elements in the queue.
+ *
+ * @description This queue implementation is based on a circular queue, also known as a circular buffer.
+ * It utilizes a fixed-size array and employs the concept of wrapping around the indices to achieve a circular behavior.
+ * The circular nature allows efficient utilization of space without wasting memory. 
+ * All operations take O(1).
+ */
 #define DECLARE_QUEUE(type) \
     typedef struct { \
         int8_t front; \
@@ -14,28 +24,45 @@
         type elements[QUEUE_MAX_CAPACITY]; \
     } QUEUE_ ##type; \
     \
+    /**
+     * @brief Initialize the queue.
+     *
+     * @param q Pointer to the queue to be initialized.
+     */
     void QUEUE_##type##_Init(QUEUE_##type *q) { \
         q->front = -1; \
         q->rear = -1; \
     } \
     \
+    /**
+     * @brief Enqueue an element into the queue.
+     *
+     * @param q Pointer to the queue.
+     * @param item The item to be enqueued.
+     */
     void QUEUE_##type##_Enqueue(QUEUE_##type *q, type item) { \
-        if (((q->rear + 1) & (QUEUE_MAX_CAPACITY - 1)) == q->front) { \
+        if (((q->rear + 1) % QUEUE_MAX_CAPACITY) == q->front) { \
             printf("Queue is full. Cannot enqueue.\n"); \
             return; \
         } \
         \
-        q->rear = (q->rear + 1) & (QUEUE_MAX_CAPACITY - 1); \
+        q->rear = (q->rear + 1) % QUEUE_MAX_CAPACITY; \
         q->elements[q->rear] = item; \
         if (q->front == -1) { \
             q->front = 0; \
         } \
     } \
     \
+    /**
+     * @brief Dequeue an element from the queue.
+     *
+     * @param q Pointer to the queue.
+     * @return The dequeued item.
+     */
     type QUEUE_##type##_Dequeue(QUEUE_##type *q) { \
         if (q->front == -1) { \
             printf("Queue is empty. Cannot dequeue.\n"); \
-            return (type){0}; \
+            return (type)0; \
         } \
         \
         type item = q->elements[q->front]; \
@@ -43,12 +70,18 @@
             q->front = -1; \
             q->rear = -1; \
         } else { \
-            q->front = (q->front + 1) & (QUEUE_MAX_CAPACITY - 1); \
+            q->front = (q->front + 1) % QUEUE_MAX_CAPACITY; \
         } \
         \
         return item; \
     } \
     \
+    /**
+     * @brief Get the current size of the queue.
+     *
+     * @param q Pointer to the queue.
+     * @return The current size of the queue.
+     */
     int QUEUE_##type##_GetSize(QUEUE_##type *q) { \
         if (q->front == -1) { \
             return 0; \
@@ -61,13 +94,19 @@
         } \
     } \
     \
+    /**
+     * @brief Peek at the front element of the queue.
+     *
+     * @param q Pointer to the queue.
+     * @return The element at the front of the queue.
+     */
     type QUEUE_##type##_Peek(QUEUE_##type *q) { \
         if (q->front == -1) { \
             printf("Queue is empty. Cannot peek.\n"); \
-            return (type){0}; \
+            return (type)0; \
         } \
         \
         return q->elements[q->front]; \
     }
 
-    #endif
+#endif
