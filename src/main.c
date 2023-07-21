@@ -1,7 +1,8 @@
 #include "unity.h"
 #include "queue/queue.h"
+#include "active-object/active-object.h"
 
-DECLARE_QUEUE(int) ;
+DECLARE_QUEUE(int, QUEUE_MAX_CAPACITY) ;
 
 void setUp(void) {
     // Set up any necessary resources before each test
