@@ -81,7 +81,7 @@
     T QUEUE_##T##_Dequeue(QUEUE_##T *q) { \
         if (q->front == -1) { \
             printf("Queue is empty. Cannot dequeue.\n"); \
-            return (T)0; \
+            return (T){0}; \
         } \
         \
         T item = q->elements[q->front]; \
@@ -124,7 +124,7 @@
     T QUEUE_##T##_Peek(QUEUE_##T *q) { \
         if (q->front == -1) { \
             printf("Queue is empty. Cannot peek.\n"); \
-            return (T)0; \
+            return (T){0}; \
         } \
         \
         return q->elements[q->front]; \
