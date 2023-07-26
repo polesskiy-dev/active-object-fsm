@@ -6,8 +6,6 @@
 
 DECLARE_QUEUE(int, QUEUE_MAX_CAPACITY) ;
 
-//DECLARE_ACTIVE_OBJECT(AO_TEST, TEST_EVENT, uint8_t, QUEUE_MAX_CAPACITY);
-
 void setUp(void) {
     // Set up any necessary resources before each test
 }
@@ -21,7 +19,7 @@ void test_QueueEnqueueDequeue(void) {
 //    AO_TEST_Dispatch(&activeObjectTest, (TEST_EVENT){.sig=INIT_TEST_SIG});
 
     QUEUE_int queue;
-    QUEUE_int_Init(&queue);
+    QUEUE_int_Ctor(&queue);
 
     TEST_ASSERT_TRUE(QUEUE_int_GetSize(&queue) == 0);
     TEST_ASSERT_TRUE(QUEUE_int_Dequeue(&queue) == 0);
@@ -44,7 +42,7 @@ void test_QueueEnqueueDequeue(void) {
 
 void test_QueueFull(void) {
     QUEUE_int queue;
-    QUEUE_int_Init(&queue);
+    QUEUE_int_Ctor(&queue);
 
     // Enqueue elements until the queue is full
     for (int i = 0; i < QUEUE_MAX_CAPACITY; i++) {
@@ -65,7 +63,7 @@ void test_QueueFull(void) {
 
 void test_QueueEmpty(void) {
     QUEUE_int queue;
-    QUEUE_int_Init(&queue);
+    QUEUE_int_Ctor(&queue);
 
     // Queue is empty
     TEST_ASSERT_TRUE(QUEUE_int_GetSize(&queue) == 0);
