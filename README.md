@@ -10,4 +10,17 @@ Minimalistic implementation of Active Object pattern + FSM for embedded systems.
 
 [Doxygen docs](https://polesskiy-dev.github.io/active-object-fsm/)
 
+TODO: make naming conventions e.g.:
+
+- types
+    - CAPITAL_CASE_T for template types
+    - CAPITAL_CASE for enums
+    - CAPITAL_CASE for typedefs (???)
+    - CAPITAL_CASE for #define
+- functions
+    - MODULE_PascalCase for module public functions
+    - camelCase for module private functions
+- variables
+    - MODULE_camelCase for module global variables
+    - camelCase for local variables
 
