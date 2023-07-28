@@ -7,7 +7,10 @@
 
 #define BLINKY_AO                   BLINKY_AO
 #define BLINKY_QUEUE_MAX_CAPACITY   (8)
-#define EMPTY_QUEUE                 (0)
+
+typedef enum {
+    AO_BLINKY_ID
+} ACTIVE_OBJECT_ID;
 
 typedef enum {
     BLINKY_NO_SIG,
@@ -35,16 +38,21 @@ const char *const STATES_STRINGS[] = {
         "BLINKY_NO_ST", "BLINKY_INIT_ST", "BLINKY_LED_ON_ST", "BLINKY_LED_OFF_ST"
 };
 
-DECLARE_ACTIVE_OBJECT(BLINKY_AO, BLINKY_EVENT, BLINKY_STATE, BLINKY_QUEUE_MAX_CAPACITY, BLINKY_MAX_SIG, BLINKY_MAX_ST);
-//DECLARE_FSM(BLINKY_AO, BLINKY_EVENT, BLINKY_STATE, BLINKY_MAX_SIG, BLINKY_MAX_ST);
+/**
+ * Active Object Declarations
+ */
+DECLARE_ACTIVE_OBJECT(BLINKY_AO, BLINKY_EVENT, BLINKY_STATE, AO_BLINKY_ID, BLINKY_QUEUE_MAX_CAPACITY);
 
+/**
+ * Application and local declarations
+ */
 BLINKY_AO blinkyActiveObject;
 
-void AO_Tasks();
-BLINKY_STATE AO_getNextState(BLINKY_AO * const activeObject, BLINKY_EVENT e);
-void AO_processQueue(BLINKY_AO * const activeObject);
-void AO_handleEvent(BLINKY_AO * const activeObject, BLINKY_EVENT e);
-void AO_processToNextState(BLINKY_AO * const activeObject, BLINKY_STATE nextState);
+void runTasks();
+/** local FSM functions, */
+BLINKY_STATE LOCAL_FSM_GetNextState(BLINKY_AO * const activeObject, BLINKY_EVENT e);
+void LOCAL_FSM_ProcessEvent(BLINKY_AO * const activeObject, BLINKY_EVENT e);
+void LOCAL_FSM_NextStateTransition(BLINKY_AO * const activeObject, BLINKY_STATE nextState);
 
 int main(void) {
     BLINKY_AO_Ctor(&blinkyActiveObject, BLINKY_INIT_ST);
@@ -52,29 +60,29 @@ int main(void) {
     printf("Starting Blinky FSM\n");
     printf("Dispatching INIT Event\n");
     BLINKY_AO_Dispatch(&blinkyActiveObject, (BLINKY_EVENT){.sig=BLINKY_INIT_SIG});
-    AO_Tasks();
+    runTasks();
     printf("BLINKY state is: %s \n", STATES_STRINGS[blinkyActiveObject.state]);
 
     // turn on
     printf("LED ON Event\n");
     BLINKY_AO_Dispatch(&blinkyActiveObject, (BLINKY_EVENT){.sig=BLINKY_LED_ON_SIG});
-    AO_Tasks();
+    runTasks();
     printf("BLINKY state is: %s \n", STATES_STRINGS[blinkyActiveObject.state]);
     printf("LED ON Event, one more time \n");
     BLINKY_AO_Dispatch(&blinkyActiveObject, (BLINKY_EVENT){.sig=BLINKY_LED_ON_SIG});
-    AO_Tasks();
+    runTasks();
     printf("BLINKY state is: %s \n", STATES_STRINGS[blinkyActiveObject.state]);
 
     // turn OFF
     printf("LED OFF Event\n");
     BLINKY_AO_Dispatch(&blinkyActiveObject, (BLINKY_EVENT){.sig=BLINKY_LED_OFF_SIG});
-    AO_Tasks();
+    runTasks();
     printf("BLINKY state is: %s \n", STATES_STRINGS[blinkyActiveObject.state]);
 
     return 0;
 }
 
-BLINKY_STATE AO_getNextState(BLINKY_AO * const activeObject, BLINKY_EVENT e) {
+BLINKY_STATE LOCAL_FSM_GetNextState(BLINKY_AO * const activeObject, BLINKY_EVENT e) {
     const BLINKY_STATE currState = activeObject->state;
 
     switch(currState) {
@@ -103,25 +111,16 @@ BLINKY_STATE AO_getNextState(BLINKY_AO * const activeObject, BLINKY_EVENT e) {
     return currState;
 };
 
-void AO_Tasks() {
-    AO_processQueue(&blinkyActiveObject);
+void runTasks() {
+    BLINKY_AO_ProcessQueue(&blinkyActiveObject, &LOCAL_FSM_ProcessEvent, NULL);
 }
 
-void AO_processQueue(BLINKY_AO * const activeObject) {
-    bool isEmptyQueue = EMPTY_QUEUE == QUEUE_BLINKY_EVENT_GetSize(&activeObject->queue);
-
-    if (!isEmptyQueue) {
-        BLINKY_EVENT e = QUEUE_BLINKY_EVENT_Dequeue(&activeObject->queue);
-        AO_handleEvent(activeObject, e);
-    }
-};
-
-void AO_handleEvent(BLINKY_AO * const activeObject, BLINKY_EVENT e) {
-    BLINKY_STATE nextState = AO_getNextState(activeObject, e);
+void LOCAL_FSM_ProcessEvent(BLINKY_AO *const activeObject, BLINKY_EVENT e) {
+    BLINKY_STATE nextState = LOCAL_FSM_GetNextState(activeObject, e);
     // set state
-    AO_processToNextState(activeObject, nextState);
+    LOCAL_FSM_NextStateTransition(activeObject, nextState);
 };
 
-void AO_processToNextState(BLINKY_AO * const activeObject, BLINKY_STATE nextState) {
+void LOCAL_FSM_NextStateTransition(BLINKY_AO *const activeObject, BLINKY_STATE nextState) {
     activeObject->state = nextState;
 }

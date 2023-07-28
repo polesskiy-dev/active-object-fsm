@@ -20,7 +20,8 @@
  */
 
 /** suggested max queue capacity */
-#define QUEUE_MAX_CAPACITY (16)
+#define QUEUE_MAX_CAPACITY  (16)
+#define EMPTY_QUEUE         (0)
 
 // TODO check how to Doxygen internal template functions
 
