@@ -17,7 +17,7 @@ typedef enum {
     REQUEST_SUCCESS_SIG,
     REQUEST_ERROR_SIG,
     TIMEOUT_SIG,
-    REQUEST_MAX_SIG,
+    REQUEST_SIG_MAX,
 } REQUEST_SIG;
 
 typedef enum {
@@ -25,7 +25,7 @@ typedef enum {
     PENDING_ST,
     SUCCESS_ST,
     ERROR_ST,
-    REQUEST_MAX_ST,
+    REQUEST_ST_MAX,
 } REQUEST_STATE;
 
 typedef struct {
@@ -38,10 +38,8 @@ const char *const STATES_STRINGS[] = {
         "REQUEST_NO_ST", "PENDING_ST", "SUCCESS_ST", "ERROR_ST"
 };
 
-/**
- * Active Object Declarations
- */
 DECLARE_ACTIVE_OBJECT(REQUEST_AO, REQUEST_EVENT, REQUEST_STATE, REQUEST_AO_ID, REQUEST_QUEUE_MAX_CAPACITY);
+DECLARE_FSM(REQUEST_AO, REQUEST_EVENT, REQUEST_STATE, REQUEST_SIG_MAX, REQUEST_ST_MAX);
 
 /**
  * Application and local declarations
@@ -49,6 +47,16 @@ DECLARE_ACTIVE_OBJECT(REQUEST_AO, REQUEST_EVENT, REQUEST_STATE, REQUEST_AO_ID, R
 REQUEST_AO requestActiveObject;
 
 void runTasks();
+REQUEST_STATE mockStateHandler(REQUEST_AO *const activeObject, REQUEST_EVENT event);
+REQUEST_STATE processEventToNextState(REQUEST_AO *const activeObject, REQUEST_EVENT event);
+
+// state transitions table, [state][event] => state handler f pointer
+REQUEST_STATE_HANDLE_F requestTransitionTable[REQUEST_ST_MAX][REQUEST_SIG_MAX] = {
+        [REQUEST_NO_ST]=    {[MAKE_REQUEST_SIG]=&mockStateHandler},
+        [PENDING_ST]=       {[REQUEST_SUCCESS_SIG]=&mockStateHandler, [REQUEST_ERROR_SIG]=&mockStateHandler, [TIMEOUT_SIG]=&mockStateHandler}
+};
+
+// TODO should we pass cb to state transition?
 
 int main(void) {
     REQUEST_AO_Ctor(&requestActiveObject, REQUEST_NO_ST);
@@ -63,5 +71,15 @@ int main(void) {
 }
 
 void runTasks() {
-    // TODO implement FSM
+    REQUEST_AO_ProcessQueue(&requestActiveObject, processEventToNextState, NULL);
+};
+
+REQUEST_STATE mockStateHandler(REQUEST_AO *const activeObject, REQUEST_EVENT event) {
+    printf("handling state %s\n", STATES_STRINGS[activeObject->state]);
+    return SUCCESS_ST;
+};
+
+// kinda lambda
+REQUEST_STATE processEventToNextState(REQUEST_AO *const activeObject, REQUEST_EVENT event) {
+    return REQUEST_AO_FSM_ProcessEventToNextState(activeObject, event, requestTransitionTable);
 };
