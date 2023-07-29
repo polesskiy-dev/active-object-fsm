@@ -1,0 +1,11 @@
+digraph blinky_state_machine {
+    fontname="Helvetica,Arial,sans-serif"
+    node [fontname="Helvetica,Arial,sans-serif"]
+    edge [fontname="Helvetica,Arial,sans-serif"]
+    rankdir=LR;
+    null [shape=point];
+    node [shape = oval]; ON OFF;
+    null -> ON [label = LED_ON]
+    ON -> OFF [label = LED_OFF]
+    OFF -> ON [label = LED_ON]
+}

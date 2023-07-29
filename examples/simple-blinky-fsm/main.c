@@ -54,6 +54,8 @@ BLINKY_STATE LOCAL_FSM_GetNextState(BLINKY_AO * const activeObject, BLINKY_EVENT
 void LOCAL_FSM_ProcessEvent(BLINKY_AO * const activeObject, BLINKY_EVENT e);
 void LOCAL_FSM_NextStateTransition(BLINKY_AO * const activeObject, BLINKY_STATE nextState);
 
+// TODO get rid of INIT state
+
 int main(void) {
     BLINKY_AO_Ctor(&blinkyActiveObject, BLINKY_INIT_ST);
 

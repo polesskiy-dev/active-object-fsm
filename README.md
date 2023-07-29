@@ -10,6 +10,10 @@ Minimalistic implementation of Active Object pattern + FSM for embedded systems.
 
 [Doxygen docs](https://polesskiy-dev.github.io/active-object-fsm/)
 
+## Examples
+
+[Blinky: simple LED on/off demo](./examples/simple-blinky-fsm/README.md)
+
 TODO: make naming conventions e.g.:
 
 - types
