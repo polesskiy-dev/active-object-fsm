@@ -1,7 +1,6 @@
 #include "stdio.h"
 #include "stdint.h"
 
-#include "../../src/event/event.h"
 #include "../../src/queue/queue.h"
 #include "../../src/active-object/active-object.h"
 

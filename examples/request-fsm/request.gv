@@ -1,0 +1,14 @@
+digraph request_state_machine {
+    fontname="Helvetica,Arial,sans-serif"
+    node [fontname="Helvetica,Arial,sans-serif"]
+    edge [fontname="Helvetica,Arial,sans-serif"]
+    rankdir=LR;
+    null    [shape=point];
+    node    [shape = oval]; PENDING SUCCESS ERROR;
+    null -> PENDING [label=MAKE_REQUEST]
+    PENDING -> SUCCESS [label=REQUEST_SUCCESS]
+    PENDING -> PENDING [label="TIMEOUT [retries < max]"]
+    PENDING -> ERROR [label="TIMEOUT [retries >= max]"]
+    PENDING -> ERROR [label="REQUEST_ERROR [retries >= max]"]
+    PENDING -> PENDING [label="REQUEST_ERROR [retries < max]"]
+}

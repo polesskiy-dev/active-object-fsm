@@ -65,7 +65,7 @@ void ACTIVE_OBJECT_BASE_Ctor(ACTIVE_OBJECT_BASE *const self, uint8_t id) {
                                                                                                                   \
         if (isEmptyQueue) return hasEmptyQueueCb(self);                                                                \
                                                                                                                   \
-        BLINKY_EVENT e = QUEUE_BLINKY_EVENT_Dequeue(&self->queue);  \
+        EVENT_T e = QUEUE_##EVENT_T##_Dequeue(&self->queue);  \
         eventHandlerCb(self, e); \
     };
 
