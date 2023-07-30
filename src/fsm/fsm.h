@@ -13,16 +13,17 @@
 
 // TODO for HSM add to STATE struct pointers: to Parent and to Child Nodes, Level from top level state
 
-#define DECLARE_FSM(ACTIVE_OBJECT_T, EVENT_T, STATE_T, eventsMax, statesMax); \
+#define DECLARE_FSM(ACTIVE_OBJECT_T, EVENT_T, STATE_T, eventsMax, statesMax) \
 /**
  * @brief State handler function type
  */\
 typedef STATE_T (*STATE_T##_HANDLE_F)(ACTIVE_OBJECT_T *activeObject, EVENT_T event); \
+typedef bool (*STATE_T##_GUARD_F)(ACTIVE_OBJECT_T *activeObject, EVENT_T event);     \
                                                                              \
-typedef struct {                                                             \
-    STATE_T##_HANDLE_F run;  \
-    STATE_T##_HANDLE_F enter;  \
-    STATE_T##_HANDLE_F exit;  \
+typedef struct {                                                              \
+    STATE_T##_HANDLE_F  run;    \
+    STATE_T##_HANDLE_F  enter;  \
+    STATE_T##_HANDLE_F  exit;   \
 } STATE_T##_STATE;                                                        \
 \
 /**
@@ -43,6 +44,17 @@ STATE_T ACTIVE_OBJECT_T##_FSM_ProcessEventToNextState(\
         assert(NULL != stateHandler);                                       \
         STATE_T nextState = stateHandler(activeObject, event);                \
         return nextState;                                                       \
+    };                                                                       \
+
+
+// Kinda complicated Guard approach, think hot to simplify or just don't use it
+#define DECLARE_GUARD(ACTIVE_OBJECT_T, EVENT_T, CONDITION_FUNCTION, ON_TRUE_FUNCTION, ON_FALSE_FUNCTION) \
+    REQUEST_STATE GUARD_##CONDITION_FUNCTION##_##ON_TRUE_FUNCTION##_##ON_FALSE_FUNCTION(ACTIVE_OBJECT_T *const activeObject, EVENT_T event) { \
+        if (CONDITION_FUNCTION(activeObject, event)) return ON_TRUE_FUNCTION(activeObject, event);                                             \
+                                                                       \
+        return ON_FALSE_FUNCTION(activeObject, event);   \
     };
+
+#define GUARD(CONDITION_FUNCTION, ON_TRUE_FUNCTION, ON_FALSE_FUNCTION) (GUARD_##CONDITION_FUNCTION##_##ON_TRUE_FUNCTION##_##ON_FALSE_FUNCTION)
 
 #endif //FSM_H

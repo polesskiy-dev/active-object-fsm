@@ -14,6 +14,8 @@ Minimalistic implementation of Active Object pattern + FSM for embedded systems.
 
 [Blinky: simple LED on/off demo](./examples/simple-blinky-fsm/README.md)
 
+[Request: retry/timeout, transition table demo](./examples/request-fsm/README.md)
+
 TODO: make naming conventions e.g.:
 
 - types

@@ -47,16 +47,22 @@ DECLARE_FSM(REQUEST_AO, REQUEST_EVENT, REQUEST_STATE, REQUEST_SIG_MAX, REQUEST_S
 REQUEST_AO requestActiveObject;
 
 void runTasks();
-REQUEST_STATE mockStateHandler(REQUEST_AO *const activeObject, REQUEST_EVENT event);
+bool canRetry(REQUEST_AO *const activeObject, REQUEST_EVENT event);
+REQUEST_STATE performRequest(REQUEST_AO *const activeObject, REQUEST_EVENT event);
+REQUEST_STATE requestError(REQUEST_AO *const activeObject, REQUEST_EVENT event);
+REQUEST_STATE requestSuccess(REQUEST_AO *const activeObject, REQUEST_EVENT event);
 REQUEST_STATE processEventToNextState(REQUEST_AO *const activeObject, REQUEST_EVENT event);
+
+DECLARE_GUARD(REQUEST_AO, REQUEST_EVENT, canRetry, performRequest, requestError);
 
 // state transitions table, [state][event] => state handler f pointer
 REQUEST_STATE_HANDLE_F requestTransitionTable[REQUEST_ST_MAX][REQUEST_SIG_MAX] = {
-        [REQUEST_NO_ST]=    {[MAKE_REQUEST_SIG]=&mockStateHandler},
-        [PENDING_ST]=       {[REQUEST_SUCCESS_SIG]=&mockStateHandler, [REQUEST_ERROR_SIG]=&mockStateHandler, [TIMEOUT_SIG]=&mockStateHandler}
+        [REQUEST_NO_ST]=    {[MAKE_REQUEST_SIG]=performRequest},
+        [PENDING_ST]=       {[REQUEST_SUCCESS_SIG]=requestSuccess, [REQUEST_ERROR_SIG]=GUARD(canRetry, performRequest, requestError), [TIMEOUT_SIG]=GUARD(canRetry, performRequest, requestError)}
 };
 
 // TODO should we pass cb to state transition?
+int maxRetries = 4;
 
 int main(void) {
     REQUEST_AO_Ctor(&requestActiveObject, REQUEST_NO_ST);
@@ -67,6 +73,16 @@ int main(void) {
     runTasks();
     printf("REQUEST AO state is: %s \n", STATES_STRINGS[requestActiveObject.state]);
 
+    printf("Dispatching ERROR Event\n");
+    REQUEST_AO_Dispatch(&requestActiveObject, (REQUEST_EVENT){.sig=REQUEST_ERROR_SIG});
+    runTasks();
+    printf("REQUEST AO state is: %s \n", STATES_STRINGS[requestActiveObject.state]);
+
+    printf("Dispatching TIMEOUT Event\n");
+    REQUEST_AO_Dispatch(&requestActiveObject, (REQUEST_EVENT){.sig=TIMEOUT_SIG});
+    runTasks();
+    printf("REQUEST AO state is: %s \n", STATES_STRINGS[requestActiveObject.state]);
+
     return 0;
 }
 
@@ -74,12 +90,25 @@ void runTasks() {
     REQUEST_AO_ProcessQueue(&requestActiveObject, processEventToNextState, NULL);
 };
 
-REQUEST_STATE mockStateHandler(REQUEST_AO *const activeObject, REQUEST_EVENT event) {
-    printf("handling state %s\n", STATES_STRINGS[activeObject->state]);
-    return SUCCESS_ST;
+REQUEST_STATE performRequest(REQUEST_AO *const activeObject, REQUEST_EVENT event) {
+    return PENDING_ST;
+}
+
+bool canRetry(REQUEST_AO *const activeObject, REQUEST_EVENT event) {
+    printf("Guard check whether we can retry\n");
+    return true;
 };
 
-// kinda lambda
 REQUEST_STATE processEventToNextState(REQUEST_AO *const activeObject, REQUEST_EVENT event) {
     return REQUEST_AO_FSM_ProcessEventToNextState(activeObject, event, requestTransitionTable);
 };
+
+REQUEST_STATE requestError(REQUEST_AO *const activeObject, REQUEST_EVENT event) {
+    printf("Request error occurs\n");
+    return ERROR_ST;
+};
+
+REQUEST_STATE requestSuccess(REQUEST_AO *const activeObject, REQUEST_EVENT event) {
+    printf("Request success occurs\n");
+    return SUCCESS_ST;
+}
