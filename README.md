@@ -16,6 +16,8 @@ Minimalistic implementation of Active Object pattern + FSM for embedded systems.
 
 [Request: retry/timeout, transition table demo](./examples/request-fsm/README.md)
 
+[Request: retry after delay + rety/timeout, transition table demo](./examples/request-retry-fsm/README.md)
+
 ## Advantages
 
 Preprocessor templates allow strict typings and debugger suggestions, all types and enums have human-readable names, e.g. from [Request demo](./examples/request-fsm/README.md):
@@ -41,7 +43,7 @@ Diagrams are generated with help of [Graphviz]() .dot engine.
 To generate locally:
 ```
 $ brew install graphviz # install Graphviz (MacOS)
-$ for file in ./**/*.gv; do dot -Tsvg "$file" > "${file%.$gv}.$svg"; done # dot -Tsvg file.gv > file.svg  
+$ for file in ./**/*.gv; do dot -Tsvg "$file" > "${file%.gv}.svg"; done # dot -Tsvg file.gv > file.svg  
 ```
 
 

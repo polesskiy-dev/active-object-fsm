@@ -4,11 +4,11 @@ digraph request_delayed_retry_state_machine {
     edge [fontname="Helvetica,Arial,sans-serif"]
     rankdir=LR;
     null    [shape=point];
-    node    [shape = oval]; PENDING RETRY SUCCESS ERROR;
+    node    [shape = oval]; PENDING RETRY_WAIT SUCCESS ERROR;
     null -> PENDING [label="MAKE_REQUEST"]
-    PENDING -> RETRY [label="TIMEOUT [retries < max]"]
-    PENDING -> RETRY [label="REQUEST_ERROR [retries < max]"]
-    RETRY -> PENDING [label="MAKE_REQUEST"]
+    PENDING -> RETRY_WAIT [label="TIMEOUT [retries < max]"]
+    PENDING -> RETRY_WAIT [label="REQUEST_ERROR [retries < max]"]
+    RETRY_WAIT -> PENDING [label="MAKE_REQUEST"]
     PENDING -> ERROR [label="TIMEOUT [retries >= max]"]
     PENDING -> ERROR [label="REQUEST_ERROR [retries >= max]"]
     PENDING -> SUCCESS [label="REQUEST_SUCCESS"]

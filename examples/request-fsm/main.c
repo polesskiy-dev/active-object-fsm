@@ -112,12 +112,14 @@ void runTasks() {
 };
 
 REQUEST_STATE performRequest(REQUEST_AO *const activeObject, REQUEST_EVENT event) {
+    if (REQUEST_ERROR_SIG == event.sig || TIMEOUT_SIG == event.sig) activeObject->fields.maxRetries--;
+
     printf("(fake request)\n");
     return PENDING_ST;
 }
 
 bool canRetry(REQUEST_AO *const activeObject, REQUEST_EVENT event) {
-    if (activeObject->fields.maxRetries-- > NO_RETRIES_LEFT) return true;
+    if (activeObject->fields.maxRetries > NO_RETRIES_LEFT) return true;
     return false;
 };
 
@@ -127,10 +129,13 @@ REQUEST_STATE processEventToNextState(REQUEST_AO *const activeObject, REQUEST_EV
 
 REQUEST_STATE requestError(REQUEST_AO *const activeObject, REQUEST_EVENT event) {
     printf("Request error occurs\n");
+    activeObject->fields.maxRetries--;
+
     return ERROR_ST;
 };
 
 REQUEST_STATE requestSuccess(REQUEST_AO *const activeObject, REQUEST_EVENT event) {
     printf("Request success occurs\n");
+
     return SUCCESS_ST;
 }
