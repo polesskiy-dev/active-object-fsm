@@ -5,8 +5,10 @@
 #include "../../src/active-object/active-object.h"
 #include "../../src/fsm/fsm.h"
 
-#define REQUEST_AO                   REQUEST_AO
-#define REQUEST_QUEUE_MAX_CAPACITY   (8)
+#define REQUEST_AO                      REQUEST_AO
+#define REQUEST_QUEUE_MAX_CAPACITY      (8)
+#define NO_RETRIES_LEFT                 (0)
+#define MAX_RETRIES                     (1)
 
 typedef enum {
     REQUEST_AO_ID
@@ -66,23 +68,40 @@ REQUEST_STATE_HANDLE_F requestTransitionTable[REQUEST_ST_MAX][REQUEST_SIG_MAX] =
 };
 
 int main(void) {
-    REQUEST_AO_Ctor(&requestActiveObject, REQUEST_NO_ST, (REQUEST_AO_FIELDS){.maxRetries = 4});
+    printf("Starting Request FSM\n\n");
 
-    printf("Starting Request FSM\n");
+    printf("Initializing Request Active Object\n\n");
+    REQUEST_AO_Ctor(&requestActiveObject, REQUEST_NO_ST, (REQUEST_AO_FIELDS){.maxRetries = MAX_RETRIES});
+
     printf("Dispatching MAKE REQUEST Event\n");
     REQUEST_AO_Dispatch(&requestActiveObject, (REQUEST_EVENT){.sig=MAKE_REQUEST_SIG});
     runTasks();
-    printf("REQUEST AO state is: %s \n", STATES_STRINGS[requestActiveObject.state]);
+    printf("REQUEST AO state is: %s \n\n", STATES_STRINGS[requestActiveObject.state]);
 
     printf("Dispatching ERROR Event\n");
     REQUEST_AO_Dispatch(&requestActiveObject, (REQUEST_EVENT){.sig=REQUEST_ERROR_SIG});
     runTasks();
-    printf("REQUEST AO state is: %s \n", STATES_STRINGS[requestActiveObject.state]);
+    printf("REQUEST AO state is: %s \n\n", STATES_STRINGS[requestActiveObject.state]);
 
     printf("Dispatching TIMEOUT Event\n");
     REQUEST_AO_Dispatch(&requestActiveObject, (REQUEST_EVENT){.sig=TIMEOUT_SIG});
     runTasks();
-    printf("REQUEST AO state is: %s \n", STATES_STRINGS[requestActiveObject.state]);
+    printf("REQUEST AO state is: %s \n\n", STATES_STRINGS[requestActiveObject.state]);
+
+    // reinit, happy path
+
+    printf("Initializing Request Active Object\n\n");
+    REQUEST_AO_Ctor(&requestActiveObject, REQUEST_NO_ST, (REQUEST_AO_FIELDS){.maxRetries = MAX_RETRIES});
+
+    printf("Dispatching MAKE REQUEST Event\n");
+    REQUEST_AO_Dispatch(&requestActiveObject, (REQUEST_EVENT){.sig=MAKE_REQUEST_SIG});
+    runTasks();
+    printf("REQUEST AO state is: %s \n\n", STATES_STRINGS[requestActiveObject.state]);
+
+    printf("Dispatching SUCCESS Event\n");
+    REQUEST_AO_Dispatch(&requestActiveObject, (REQUEST_EVENT){.sig=REQUEST_SUCCESS_SIG});
+    runTasks();
+    printf("REQUEST AO state is: %s \n\n", STATES_STRINGS[requestActiveObject.state]);
 
     return 0;
 }
@@ -92,12 +111,13 @@ void runTasks() {
 };
 
 REQUEST_STATE performRequest(REQUEST_AO *const activeObject, REQUEST_EVENT event) {
+    printf("(fake request)\n");
     return PENDING_ST;
 }
 
 bool canRetry(REQUEST_AO *const activeObject, REQUEST_EVENT event) {
-    printf("Guard check whether we can retry\n");
-    return true;
+    if (activeObject->fields.maxRetries-- > NO_RETRIES_LEFT) return true;
+    return false;
 };
 
 REQUEST_STATE processEventToNextState(REQUEST_AO *const activeObject, REQUEST_EVENT event) {
