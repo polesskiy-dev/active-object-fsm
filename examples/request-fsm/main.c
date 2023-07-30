@@ -6,7 +6,7 @@
 #include "../../src/fsm/fsm.h"
 
 #define REQUEST_AO                      REQUEST_AO
-#define REQUEST_QUEUE_MAX_CAPACITY      (8)
+#define REQUEST_QUEUE_MAX_CAPACITY      (4)
 #define NO_RETRIES_LEFT                 (0)
 #define MAX_RETRIES                     (1)
 
@@ -15,6 +15,7 @@ typedef enum {
 } ACTIVE_OBJECT_ID;
 
 typedef enum {
+    NO_SIG,
     MAKE_REQUEST_SIG,
     REQUEST_SUCCESS_SIG,
     REQUEST_ERROR_SIG,

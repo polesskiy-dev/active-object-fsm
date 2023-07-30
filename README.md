@@ -16,6 +16,12 @@ Minimalistic implementation of Active Object pattern + FSM for embedded systems.
 
 [Request: retry/timeout, transition table demo](./examples/request-fsm/README.md)
 
+## Advantages
+
+Preprocessor templates allow strict typings and debugger suggestions, all types and enums have human-readable names, e.g. from [Request demo](./examples/request-fsm/README.md):
+
+![types](./docs/active-object-typings.png)
+
 TODO: make naming conventions e.g.:
 
 - types
