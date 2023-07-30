@@ -28,6 +28,26 @@ void ACTIVE_OBJECT_BASE_Ctor(ACTIVE_OBJECT_BASE *const self, uint8_t id) {
     self->id = id;
 };
 
+/**
+ * @def ACTIVE_OBJECT_T##_Ctor(ACTIVE_OBJECT_T *const self, STATE_T initialState, FIELDS_T fields)
+ *
+ * @brief Active Object constructor
+ *
+ * @param self Active Object
+ * @param initialState initial state
+ * @param fields User-defined fields, accommodates actual application data
+ */
+
+/**
+ * @brief Active object Template
+ *
+ * @param ACTIVE_OBJECT_T Active Object Type
+ * @param EVENT_T Event Type
+ * @param STATE_T State Type
+ * @param FIELDS_T Active Object field Type
+ * @param id ID value
+ * @param maxQueueCapacity Queue capacity value
+ */
 #define DECLARE_ACTIVE_OBJECT(ACTIVE_OBJECT_T, EVENT_T, STATE_T, FIELDS_T, id, maxQueueCapacity)                      \
                                                                                                               \
     DECLARE_QUEUE(EVENT_T, maxQueueCapacity);                                                                  \
@@ -59,7 +79,7 @@ void ACTIVE_OBJECT_BASE_Ctor(ACTIVE_OBJECT_BASE *const self, uint8_t id) {
     \
     void transitionToNextState(ACTIVE_OBJECT_T *const self, STATE_T nextState) {    \
         self->state = nextState; \
-    }\
+    };\
     /**
     * Run it in Tasks()
     * // TODO maybe add arg hasEmptyQueueCb() - to notify that MCU can go to sleep?
