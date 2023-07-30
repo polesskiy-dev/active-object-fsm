@@ -30,3 +30,13 @@ TODO: make naming conventions e.g.:
     - MODULE_camelCase for module global variables
     - camelCase for local variables
 
+## Side notes
+Diagrams are generated with help of [Graphviz]() .dot engine.
+To generate locally:
+```
+$ brew install graphviz # install Graphviz (MacOS)
+$ for file in ./**/*.gv; do dot -Tsvg "$file" > "${file%.$gv}.$svg"; done # dot -Tsvg file.gv > file.svg  
+```
+
+
+
