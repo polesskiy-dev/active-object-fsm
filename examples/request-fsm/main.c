@@ -38,7 +38,11 @@ const char *const STATES_STRINGS[] = {
         "REQUEST_NO_ST", "PENDING_ST", "SUCCESS_ST", "ERROR_ST"
 };
 
-DECLARE_ACTIVE_OBJECT(REQUEST_AO, REQUEST_EVENT, REQUEST_STATE, REQUEST_AO_ID, REQUEST_QUEUE_MAX_CAPACITY);
+typedef struct {
+    uint8_t maxRetries;
+} REQUEST_AO_FIELDS;
+
+DECLARE_ACTIVE_OBJECT(REQUEST_AO, REQUEST_EVENT, REQUEST_STATE, REQUEST_AO_FIELDS, REQUEST_AO_ID, REQUEST_QUEUE_MAX_CAPACITY);
 DECLARE_FSM(REQUEST_AO, REQUEST_EVENT, REQUEST_STATE, REQUEST_SIG_MAX, REQUEST_ST_MAX);
 
 /**
@@ -61,11 +65,8 @@ REQUEST_STATE_HANDLE_F requestTransitionTable[REQUEST_ST_MAX][REQUEST_SIG_MAX] =
         [PENDING_ST]=       {[REQUEST_SUCCESS_SIG]=requestSuccess, [REQUEST_ERROR_SIG]=GUARD(canRetry, performRequest, requestError), [TIMEOUT_SIG]=GUARD(canRetry, performRequest, requestError)}
 };
 
-// TODO should we pass cb to state transition?
-int maxRetries = 4;
-
 int main(void) {
-    REQUEST_AO_Ctor(&requestActiveObject, REQUEST_NO_ST);
+    REQUEST_AO_Ctor(&requestActiveObject, REQUEST_NO_ST, (REQUEST_AO_FIELDS){.maxRetries = 4});
 
     printf("Starting Request FSM\n");
     printf("Dispatching MAKE REQUEST Event\n");

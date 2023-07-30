@@ -28,14 +28,15 @@ void ACTIVE_OBJECT_BASE_Ctor(ACTIVE_OBJECT_BASE *const self, uint8_t id) {
     self->id = id;
 };
 
-#define DECLARE_ACTIVE_OBJECT(ACTIVE_OBJECT_T, EVENT_T, STATE_T, id, maxQueueCapacity)                      \
+#define DECLARE_ACTIVE_OBJECT(ACTIVE_OBJECT_T, EVENT_T, STATE_T, FIELDS_T, id, maxQueueCapacity)                      \
                                                                                                               \
     DECLARE_QUEUE(EVENT_T, maxQueueCapacity);                                                                  \
                                                                                                               \
     typedef struct {                                                                                          \
         ACTIVE_OBJECT_BASE super;                                         \
         QUEUE_##EVENT_T queue;                           \
-        STATE_T state;                                   \
+        STATE_T state;                                                                                           \
+        FIELDS_T fields;    \
     } ACTIVE_OBJECT_T;                                                                                            \
                                                                                                                   \
     /**
@@ -45,10 +46,11 @@ void ACTIVE_OBJECT_BASE_Ctor(ACTIVE_OBJECT_BASE *const self, uint8_t id) {
                                                                                                                   \
     typedef void (*ACTIVE_OBJECT_T##HAS_EMPTY_QUEUE_F)(ACTIVE_OBJECT_T *const self);  \
                                                                                                               \
-    void ACTIVE_OBJECT_T##_Ctor(ACTIVE_OBJECT_T *const self, STATE_T initialState) {                              \
+    void ACTIVE_OBJECT_T##_Ctor(ACTIVE_OBJECT_T *const self, STATE_T initialState, FIELDS_T fields) {                              \
         ACTIVE_OBJECT_BASE_Ctor(&self->super, id); \
         QUEUE_##EVENT_T##_Ctor(&self->queue);                                                                 \
-        self->state = initialState;                                                                             \
+        self->state = initialState;                                                                                   \
+        self->fields = fields;  \
     };                                                                                                              \
                                                                                                                  \
     void ACTIVE_OBJECT_T##_Dispatch(ACTIVE_OBJECT_T *const self, EVENT_T event) {         \
