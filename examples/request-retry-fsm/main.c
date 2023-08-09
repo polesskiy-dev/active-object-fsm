@@ -72,7 +72,7 @@ REQUEST_STATE_HANDLE_F requestTransitionTable[REQUEST_ST_MAX][REQUEST_SIG_MAX] =
 };
 
 int main(void) {
-    printf("Starting Request with retey FSM\n\n");
+    printf("Starting Request with retry FSM\n\n");
 
     return 0;
 };

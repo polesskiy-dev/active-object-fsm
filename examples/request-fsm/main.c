@@ -62,8 +62,8 @@ REQUEST_STATE processEventToNextState(REQUEST_AO *const activeObject, REQUEST_EV
 
 DECLARE_GUARD(REQUEST_AO, REQUEST_EVENT, canRetry, performRequest, requestError);
 
-// state transitions table, [state][event] => state handler f pointer
-REQUEST_STATE_HANDLE_F requestTransitionTable[REQUEST_ST_MAX][REQUEST_SIG_MAX] = {
+// state transitions table, [state][event] => event handler f pointer
+REQUEST_EVENT_HANDLE_F requestTransitionTable[REQUEST_ST_MAX][REQUEST_SIG_MAX] = {
         [REQUEST_NO_ST]=    {[MAKE_REQUEST_SIG]=performRequest},
         [PENDING_ST]=       {[REQUEST_SUCCESS_SIG]=requestSuccess, [REQUEST_ERROR_SIG]=GUARD(canRetry, performRequest, requestError), [TIMEOUT_SIG]=GUARD(canRetry, performRequest, requestError)}
 };
@@ -111,6 +111,12 @@ void runTasks() {
     REQUEST_AO_ProcessQueue(&requestActiveObject, processEventToNextState, NULL);
 };
 
+REQUEST_STATE processEventToNextState(REQUEST_AO *const activeObject, REQUEST_EVENT event) {
+    REQUEST_STATE nextState = REQUEST_AO_FSM_ProcessEventToNextState(activeObject, event, requestTransitionTable);
+
+    return nextState;
+};
+
 REQUEST_STATE performRequest(REQUEST_AO *const activeObject, REQUEST_EVENT event) {
     if (REQUEST_ERROR_SIG == event.sig || TIMEOUT_SIG == event.sig) activeObject->fields.maxRetries--;
 
@@ -121,10 +127,6 @@ REQUEST_STATE performRequest(REQUEST_AO *const activeObject, REQUEST_EVENT event
 bool canRetry(REQUEST_AO *const activeObject, REQUEST_EVENT event) {
     if (activeObject->fields.maxRetries > NO_RETRIES_LEFT) return true;
     return false;
-};
-
-REQUEST_STATE processEventToNextState(REQUEST_AO *const activeObject, REQUEST_EVENT event) {
-    return REQUEST_AO_FSM_ProcessEventToNextState(activeObject, event, requestTransitionTable);
 };
 
 REQUEST_STATE requestError(REQUEST_AO *const activeObject, REQUEST_EVENT event) {

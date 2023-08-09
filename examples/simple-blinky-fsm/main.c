@@ -40,7 +40,7 @@ const char *const STATES_STRINGS[] = {
 /**
  * Active Object Declarations
  */
-DECLARE_ACTIVE_OBJECT(BLINKY_AO, BLINKY_EVENT, BLINKY_STATE, AO_BLINKY_ID, BLINKY_QUEUE_MAX_CAPACITY);
+DECLARE_ACTIVE_OBJECT(BLINKY_AO, BLINKY_EVENT, BLINKY_STATE, void*, AO_BLINKY_ID, BLINKY_QUEUE_MAX_CAPACITY);
 
 /**
  * Application and local declarations
@@ -50,13 +50,12 @@ BLINKY_AO blinkyActiveObject;
 void runTasks();
 /** local FSM functions, */
 BLINKY_STATE LOCAL_FSM_GetNextState(BLINKY_AO * const activeObject, BLINKY_EVENT e);
-void LOCAL_FSM_ProcessEvent(BLINKY_AO * const activeObject, BLINKY_EVENT e);
-void LOCAL_FSM_NextStateTransition(BLINKY_AO * const activeObject, BLINKY_STATE nextState);
+BLINKY_STATE LOCAL_FSM_ProcessEvent(BLINKY_AO * const activeObject, BLINKY_EVENT e);
 
 // TODO get rid of INIT state
 
 int main(void) {
-    BLINKY_AO_Ctor(&blinkyActiveObject, BLINKY_INIT_ST);
+    BLINKY_AO_Ctor(&blinkyActiveObject, BLINKY_NO_ST, NULL);
 
     printf("Starting Blinky FSM\n");
     printf("Dispatching INIT Event\n");
@@ -87,6 +86,7 @@ BLINKY_STATE LOCAL_FSM_GetNextState(BLINKY_AO * const activeObject, BLINKY_EVENT
     const BLINKY_STATE currState = activeObject->state;
 
     switch(currState) {
+        case BLINKY_NO_ST:
         case BLINKY_INIT_ST:
             switch (e.sig) {
                 case BLINKY_INIT_SIG:
@@ -116,12 +116,8 @@ void runTasks() {
     BLINKY_AO_ProcessQueue(&blinkyActiveObject, &LOCAL_FSM_ProcessEvent, NULL);
 }
 
-void LOCAL_FSM_ProcessEvent(BLINKY_AO *const activeObject, BLINKY_EVENT e) {
+BLINKY_STATE LOCAL_FSM_ProcessEvent(BLINKY_AO *const activeObject, BLINKY_EVENT e) {
     BLINKY_STATE nextState = LOCAL_FSM_GetNextState(activeObject, e);
-    // set state
-    LOCAL_FSM_NextStateTransition(activeObject, nextState);
-};
 
-void LOCAL_FSM_NextStateTransition(BLINKY_AO *const activeObject, BLINKY_STATE nextState) {
-    activeObject->state = nextState;
-}
+    return nextState;
+};

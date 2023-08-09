@@ -13,12 +13,6 @@
 #include <stdbool.h>
 #include <assert.h>
 
-/**
- * @name QUEUE TEMPLATE
- *
- * @{
- */
-
 /** suggested max queue capacity */
 #define QUEUE_MAX_CAPACITY  (16)
 #define EMPTY_QUEUE         (0)
@@ -131,7 +125,5 @@
         \
         return q->elements[q->front]; \
     }
-
-/** @} */
 
 #endif
