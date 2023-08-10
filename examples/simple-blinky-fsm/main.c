@@ -40,7 +40,7 @@ const char *const STATES_STRINGS[] = {
 /**
  * Active Object Declarations
  */
-DECLARE_ACTIVE_OBJECT(BLINKY_AO, BLINKY_EVENT, BLINKY_STATE, void*, AO_BLINKY_ID, BLINKY_QUEUE_MAX_CAPACITY);
+DECLARE_ACTIVE_OBJECT(BLINKY_AO, BLINKY_EVENT, BLINKY_STATE, void*, BLINKY_QUEUE_MAX_CAPACITY);
 
 /**
  * Application and local declarations
@@ -55,7 +55,7 @@ BLINKY_STATE LOCAL_FSM_ProcessEvent(BLINKY_AO * const activeObject, BLINKY_EVENT
 // TODO get rid of INIT state
 
 int main(void) {
-    BLINKY_AO_Ctor(&blinkyActiveObject, BLINKY_NO_ST, NULL);
+    BLINKY_AO_Ctor(&blinkyActiveObject, AO_BLINKY_ID, BLINKY_NO_ST, NULL);
 
     printf("Starting Blinky FSM\n");
     printf("Dispatching INIT Event\n");
@@ -113,7 +113,7 @@ BLINKY_STATE LOCAL_FSM_GetNextState(BLINKY_AO * const activeObject, BLINKY_EVENT
 };
 
 void runTasks() {
-    BLINKY_AO_ProcessQueue(&blinkyActiveObject, &LOCAL_FSM_ProcessEvent, NULL);
+    BLINKY_AO_ProcessQueue(&blinkyActiveObject, LOCAL_FSM_ProcessEvent, BLINKY_AO_basicTransitionToNextState, NULL);
 }
 
 BLINKY_STATE LOCAL_FSM_ProcessEvent(BLINKY_AO *const activeObject, BLINKY_EVENT e) {

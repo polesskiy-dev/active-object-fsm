@@ -21,14 +21,6 @@
 
 // TODO what if same DECLARE_QUEUE invoked twice?
 
-typedef struct {
-    uint8_t id;
-} ACTIVE_OBJECT_BASE;
-
-void ACTIVE_OBJECT_BASE_Ctor(ACTIVE_OBJECT_BASE *const self, uint8_t id) {
-    self->id = id;
-};
-
 /**
  * @def ACTIVE_OBJECT_T##_Ctor(ACTIVE_OBJECT_T *const self, STATE_T initialState, FIELDS_T fields)
  *
@@ -49,7 +41,7 @@ void ACTIVE_OBJECT_BASE_Ctor(ACTIVE_OBJECT_BASE *const self, uint8_t id) {
  * @param id ID value
  * @param maxQueueCapacity Queue capacity value
  */
-#define DECLARE_ACTIVE_OBJECT(ACTIVE_OBJECT_T, EVENT_T, STATE_T, FIELDS_T, id, maxQueueCapacity)             \
+#define DECLARE_ACTIVE_OBJECT(ACTIVE_OBJECT_T, EVENT_T, STATE_T, FIELDS_T, maxQueueCapacity)             \
                                                                                                              \
     DECLARE_QUEUE(EVENT_T, maxQueueCapacity);                                                                \
                                                                                                              \
@@ -62,22 +54,16 @@ void ACTIVE_OBJECT_BASE_Ctor(ACTIVE_OBJECT_BASE *const self, uint8_t id) {
      * @param fields User-defined fields to store additional information
      */\
     typedef struct {                                                                                        \
-        ACTIVE_OBJECT_BASE super;                                                                           \
-        QUEUE_##EVENT_T queue;                                                                              \
+        QUEUE_##EVENT_T queue;                                                                           \
+        uint8_t id;                                                                                         \
         STATE_T state;                                                                                      \
         FIELDS_T fields;                                                                                     \
-    } ACTIVE_OBJECT_T;                                                                                      \
+    } ACTIVE_OBJECT_T;                                                                                       \
                                                                                                              \
-    /**
-     * @brief Event handler callback function type
-     */                                                                                                     \
-    typedef STATE_T (*EVENT_T##_HANDLER_F)(ACTIVE_OBJECT_T *const self, EVENT_T event);                     \
                                                                                                              \
-    /**
-     * @brief Callback for handling an empty queue
-     */                                                                                                     \
+    typedef STATE_T (*EVENT_T##_HANDLER_F)(ACTIVE_OBJECT_T *const self, EVENT_T event);\
     typedef void (*ACTIVE_OBJECT_T##HAS_EMPTY_QUEUE_F)(ACTIVE_OBJECT_T *const self);                         \
-                                                                                                             \
+    typedef bool (*STATE_T##_TRANSITION_F)(ACTIVE_OBJECT_T *const self, STATE_T state);             \
     /**
      * @brief Constructor for Active Object
      *
@@ -85,9 +71,9 @@ void ACTIVE_OBJECT_BASE_Ctor(ACTIVE_OBJECT_BASE *const self, uint8_t id) {
      * @param initialState Initial state of the Active Object
      * @param fields User-defined fields
      */                                                                                                     \
-    void ACTIVE_OBJECT_T##_Ctor(ACTIVE_OBJECT_T *const self, STATE_T initialState, FIELDS_T fields) {        \
-        ACTIVE_OBJECT_BASE_Ctor(&self->super, id);                                                          \
+    void ACTIVE_OBJECT_T##_Ctor(ACTIVE_OBJECT_T *const self, uint8_t id, STATE_T initialState, FIELDS_T fields) {        \
         QUEUE_##EVENT_T##_Ctor(&self->queue);                                                               \
+        self->id = id;                                                                         \
         self->state = initialState;                                                                         \
         self->fields = fields;                                                                              \
     };                                                                                                      \
@@ -109,28 +95,28 @@ void ACTIVE_OBJECT_BASE_Ctor(ACTIVE_OBJECT_BASE *const self, uint8_t id) {
      * @param self Pointer to the Active Object
      * @param nextState Next state to transition to
      *
-     * TODO should be improved, temporary inline
+     * TODO should be improved, temporary inline, handle here exit -> enter -> traverse for states, implementing Mealy&Moore Hybrid FSM
      */                                                                                                     \
-    static inline void ACTIVE_OBJECT_T##_transitionToNextState(ACTIVE_OBJECT_T *const self, STATE_T nextState) {    \
-        self->state = nextState;                                                                            \
+     bool ACTIVE_OBJECT_T##_basicTransitionToNextState(ACTIVE_OBJECT_T *const self, STATE_T nextState) {    \
+        self->state = nextState;                                                                             \
+        return true; \
     };                                                                                                      \
                                                                                                              \
     /**
      * @brief Process the event queue of the Active Object
      *
      * @param self Pointer to the Active Object
-     * @param eventHandlerCb Callback to handle events
+     * @param eventHandlerCb Callback to handle queue event, returns next state
      * @param hasEmptyQueueCb Callback to handle empty queue
      */                                                                                                     \
-    void ACTIVE_OBJECT_T##_ProcessQueue(ACTIVE_OBJECT_T *const self, EVENT_T##_HANDLER_F eventHandlerCb,     \
-                                        ACTIVE_OBJECT_T##HAS_EMPTY_QUEUE_F hasEmptyQueueCb) {                \
+    void ACTIVE_OBJECT_T##_ProcessQueue(ACTIVE_OBJECT_T *const self, EVENT_T##_HANDLER_F eventHandlerCb, STATE_T##_TRANSITION_F transitionToNextStateCb, ACTIVE_OBJECT_T##HAS_EMPTY_QUEUE_F hasEmptyQueueCb) { \
         bool isEmptyQueue = EMPTY_QUEUE == QUEUE_##EVENT_T##_GetSize(&self->queue);                          \
                                                                                                              \
         if (isEmptyQueue) return hasEmptyQueueCb(self);                                                     \
                                                                                                              \
         EVENT_T e = QUEUE_##EVENT_T##_Dequeue(&self->queue);                                                \
         STATE_T nextState = eventHandlerCb(self, e);                                                        \
-        ACTIVE_OBJECT_T##_transitionToNextState(self, nextState);                                            \
+        transitionToNextStateCb(self, nextState);                                            \
     };\
 
 #endif //ACTIVE_OBJECT_H

@@ -3,29 +3,9 @@
  *
  * @version 0.0.1
  * @author apolisskyi
- * @brief Template Finite State Machine
- */
-
-#ifndef FSM_H
-#define FSM_H
-
-#include <assert.h>
-
-
-/*
- * typedef struct {                                                              \
-    STATE_T##_HANDLE_F  enter;  \
-    STATE_T##_HANDLE_F  traverse;    \
-    STATE_T##_HANDLE_F  exit;   \
-} STATE_T##_HANDLE_FUNCTIONS;                                                \
-                                                                             \
-STATE_T##_HANDLE_FUNCTIONS stateHandleFunctionsList[statesMax]\\
- */
-
-/**
- * @brief Active Object FSM - A Hybrid of Mealy and Moore State Machines.
+ * @brief FSM for Active Object  - A Hybrid of Mealy and Moore State Machines.
  *
- * This Finite State Machine (FSM) implementation combines the elements of both Mealy and Moore models:
+ * @details This Finite State Machine (FSM) implementation combines the elements of both Mealy and Moore models:
  *
  * - **Moore Machine**: The FSM provides an `enter` function for states. This function is executed as soon as a state is entered,
  *   which is characteristic of Moore machines where outputs (or actions in our case) depend solely on the current state.
@@ -35,6 +15,23 @@ STATE_T##_HANDLE_FUNCTIONS stateHandleFunctionsList[statesMax]\\
  *
  * By combining these elements, this FSM offers the flexibility of both models, allowing for actions on both state entry and based on events.
  */
+
+#ifndef FSM_H
+#define FSM_H
+
+#include <assert.h>
+
+// TODO move it to active-object to implement state traversing
+/*
+
+                                                                             \
+STATE_T##_HANDLE_FUNCTIONS stateHandleFunctionsList[statesMax]\\
+ */
+
+/**
+ * @brief Active Object FSM - A Hybrid of Mealy and Moore State Machines.
+ *
+ */
 #define DECLARE_FSM(ACTIVE_OBJECT_T, EVENT_T, STATE_T, eventsMax, statesMax) \
 /**
  * @brief State handler function type
@@ -42,6 +39,12 @@ STATE_T##_HANDLE_FUNCTIONS stateHandleFunctionsList[statesMax]\\
 typedef STATE_T (*EVENT_T##_HANDLE_F)(ACTIVE_OBJECT_T *const activeObject, EVENT_T event); \
 typedef bool (*EVENT_T##_GUARD_F)(ACTIVE_OBJECT_T *const activeObject, EVENT_T event);     \
 typedef void (*STATE_T##_HANDLE_F)(ACTIVE_OBJECT_T *const activeObject, EVENT_T event);    \
+                                                                             \
+typedef struct {                                                              \
+    STATE_T##_HANDLE_F  enter;  \
+    STATE_T##_HANDLE_F  traverse;    \
+    STATE_T##_HANDLE_F  exit;   \
+} STATE_T##_HANDLE_FUNCTIONS;                                                \
 /**
  * @brief Invoke state handler f from transitions table by current state and event: [state][event] => f(event)
  *

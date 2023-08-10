@@ -6,13 +6,10 @@
 #include "../../src/fsm/fsm.h"
 
 #define REQUEST_AO                      REQUEST_AO
+#define REQUEST_AO_ID                   (0)
 #define REQUEST_QUEUE_MAX_CAPACITY      (4)
 #define NO_RETRIES_LEFT                 (0)
 #define MAX_RETRIES                     (1)
-
-typedef enum {
-    REQUEST_AO_ID
-} ACTIVE_OBJECT_ID;
 
 typedef enum {
     NO_SIG,
@@ -45,7 +42,7 @@ typedef struct {
     uint8_t maxRetries;
 } REQUEST_AO_FIELDS;
 
-DECLARE_ACTIVE_OBJECT(REQUEST_AO, REQUEST_EVENT, REQUEST_STATE, REQUEST_AO_FIELDS, REQUEST_AO_ID, REQUEST_QUEUE_MAX_CAPACITY);
+DECLARE_ACTIVE_OBJECT(REQUEST_AO, REQUEST_EVENT, REQUEST_STATE, REQUEST_AO_FIELDS, REQUEST_QUEUE_MAX_CAPACITY);
 DECLARE_FSM(REQUEST_AO, REQUEST_EVENT, REQUEST_STATE, REQUEST_SIG_MAX, REQUEST_ST_MAX);
 
 /**
@@ -72,7 +69,7 @@ int main(void) {
     printf("Starting Request FSM\n\n");
 
     printf("Initializing Request Active Object\n\n");
-    REQUEST_AO_Ctor(&requestActiveObject, REQUEST_NO_ST, (REQUEST_AO_FIELDS){.maxRetries = MAX_RETRIES});
+    REQUEST_AO_Ctor(&requestActiveObject, REQUEST_AO_ID, REQUEST_NO_ST, (REQUEST_AO_FIELDS){.maxRetries = MAX_RETRIES});
 
     printf("Dispatching MAKE REQUEST Event\n");
     REQUEST_AO_Dispatch(&requestActiveObject, (REQUEST_EVENT){.sig=MAKE_REQUEST_SIG});
@@ -92,7 +89,7 @@ int main(void) {
     // reinit, happy path
 
     printf("Initializing Request Active Object\n\n");
-    REQUEST_AO_Ctor(&requestActiveObject, REQUEST_NO_ST, (REQUEST_AO_FIELDS){.maxRetries = MAX_RETRIES});
+    REQUEST_AO_Ctor(&requestActiveObject, REQUEST_AO_ID, REQUEST_NO_ST, (REQUEST_AO_FIELDS){.maxRetries = MAX_RETRIES});
 
     printf("Dispatching MAKE REQUEST Event\n");
     REQUEST_AO_Dispatch(&requestActiveObject, (REQUEST_EVENT){.sig=MAKE_REQUEST_SIG});
@@ -108,7 +105,7 @@ int main(void) {
 }
 
 void runTasks() {
-    REQUEST_AO_ProcessQueue(&requestActiveObject, processEventToNextState, NULL);
+    REQUEST_AO_ProcessQueue(&requestActiveObject, processEventToNextState, REQUEST_AO_basicTransitionToNextState, NULL);
 };
 
 REQUEST_STATE processEventToNextState(REQUEST_AO *const activeObject, REQUEST_EVENT event) {
