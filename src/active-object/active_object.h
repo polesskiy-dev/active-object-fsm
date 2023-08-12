@@ -40,74 +40,14 @@
 // TODO it seems that global superloop is kinda "scheduler" and we need there "isIdle" function to sleep on lack of events
 
 /**
- * @struct Struct for defining the Active Object
- * @param queue Queue to store events for the Active Object
- * @param id Base of the Active Object containing ID
- * @param state Current state of the Active Object
- * @param fields User-defined fields
- */
-
-/**
- * @fn void ACTIVE_OBJECT_T##_Ctor(ACTIVE_OBJECT_T *const self, uint8_t id, STATE_T initialState, FIELDS_T fields)
- * @brief Active Object Constructor
- *
- * @param self Pointer to the Active Object
- * @param initialState Initial state of the Active Object
- * @param fields User-defined fields
- *
- * @example Create a new active object:
- * MY_ACTIVE_OBJECT myObject;
- * MY_ACTIVE_OBJECT_Ctor(&myObject, 1, initialStateEnum, myFields);
- */
-
-/**
- * @fn void ACTIVE_OBJECT_T##_Dispatch(ACTIVE_OBJECT_T *const self, EVENT_T event);
- * @brief Dispatch an event to the Active Object
- *
- * @param self Pointer to the Active Object
- * @param event Event to be dispatched
- *
- * @example Dispatching an event to the active object:
- * MY_EVENT myEvent = { .sig=SOME_SIG };
- * MY_ACTIVE_OBJECT_Dispatch(&myObject, myEvent);
-*/
-
-/**
- * @fn bool ACTIVE_OBJECT_T##_basicTransitionToNextState(ACTIVE_OBJECT_T *const self, STATE_T nextState)
- * @brief Transition to the next state of the Active Object
- *
- * @param self Pointer to the Active Object
- * @param nextState Next state to transition to
- *
- * TODO should be improved, temporary inline, handle here exit -> enter -> traverse for states, implementing Mealy&Moore Hybrid FSM
- *
- * @example Transition to a new state:
- * MY_STATE newState = ...;
- * MY_ACTIVE_OBJECT_basicTransitionToNextState(&myObject, newState);
- */
-
-/**
- * @fn void ACTIVE_OBJECT_T##_ProcessQueue(ACTIVE_OBJECT_T *const self, EVENT_T##_HANDLER_F eventHandlerCb, STATE_T##_TRANSITION_F transitionToNextStateCb, ACTIVE_OBJECT_T##HAS_EMPTY_QUEUE_F hasEmptyQueueCb)
- * @brief Process the event queue of the Active Object
- *
- * @param self Pointer to the Active Object
- * @param eventHandlerCb Callback to handle queue event, returns next state
- * @param transitionToNextStateCb Callback to transition to the next state
- * @param hasEmptyQueueCb Callback to handle empty queue
- *
- * @example Processing the event queue:
- * MY_ACTIVE_OBJECT_ProcessQueue(&myObject, myEventHandler, myTransitionCb, myEmptyQueueHandler); \
- */
-
-/**
  * @def Active object Template
  *
- * @param ACTIVE_OBJECT_T Active Object Type
- * @param EVENT_T Event Type
- * @param STATE_T State Type
- * @param FIELDS_T Active Object field Type
- * @param id ID value
- * @param maxQueueCapacity Queue capacity value
+ * @tparam ACTIVE_OBJECT_T Active Object Type
+ * @tparam EVENT_T Event Type
+ * @tparam STATE_T State Type
+ * @tparam FIELDS_T Active Object field Type
+ * @tparam id ID value
+ * @tparam maxQueueCapacity Queue capacity value
  *
  * @example DECLARE_ACTIVE_OBJECT(MY_ACTIVE_OBJECT, MY_EVENT, MY_STATE, MY_FIELDS, 16)
  */
@@ -130,4 +70,85 @@
     bool ACTIVE_OBJECT_T##_basicTransitionToNextState(ACTIVE_OBJECT_T *const self, STATE_T nextState); \
     void ACTIVE_OBJECT_T##_ProcessQueue(ACTIVE_OBJECT_T *const self, EVENT_T##_HANDLER_F eventHandlerCb, STATE_T##_TRANSITION_F transitionToNextStateCb, ACTIVE_OBJECT_T##HAS_EMPTY_QUEUE_F hasEmptyQueueCb);
 
+/**
+ * @struct ACTIVE_OBJECT_T
+ * @brief Struct for defining the Active Object
+ *
+ * @param queue Queue to store events for the Active Object
+ * @param id Base of the Active Object containing ID
+ * @param state Current state of the Active Object
+ * @param fields User-defined fields
+ */
+
+/* should never be defined, for documentation purpose only */
+#ifdef DOXYGEN_ONLY
+
+/**
+ * @brief Active Object Constructor
+ *
+ * @param self Pointer to the Active Object
+ * @param initialState Initial state of the Active Object
+ * @param fields User-defined fields
+ *
+ * ####Example:
+ * @code
+ * // Create a new active object:
+ * MY_ACTIVE_OBJECT myObject;
+ * MY_ACTIVE_OBJECT_Ctor(&myObject, 1, initialStateEnum, myFields);
+ * @endcode
+ */
+void ACTIVE_OBJECT_T_Ctor(ACTIVE_OBJECT_T *const self, uint8_t id, STATE_T initialState, FIELDS_T fields)
+
+/**
+ * @brief Dispatch an event to the Active Object
+ *
+ * @param self Pointer to the Active Object
+ * @param event Event to be dispatched
+ *
+ * ####Example:
+ * @code
+ * // Dispatching an event to the active object:
+ * MY_EVENT myEvent = { .sig=SOME_SIG };
+ * MY_ACTIVE_OBJECT_Dispatch(&myObject, myEvent);
+ * @endcode
+*/
+void ACTIVE_OBJECT_T##_Dispatch(ACTIVE_OBJECT_T *const self, EVENT_T event);
+
+/**
+ * @brief Transition to the next state of the Active Object
+ *
+ * @param self Pointer to the Active Object
+ * @param nextState Next state to transition to
+ *
+ * TODO should be improved, temporary inline, handle here exit -> enter -> traverse for states, implementing Mealy&Moore Hybrid FSM
+ *
+ * ####Example:
+ * @code
+ * // Transition to a new state:
+ * MY_STATE newState = ...;
+ * MY_ACTIVE_OBJECT_basicTransitionToNextState(&myObject, newState);
+ * @endcode
+ */
+bool ACTIVE_OBJECT_T_basicTransitionToNextState(ACTIVE_OBJECT_T *const self, STATE_T nextState)
+
+/**
+ * @brief Process the event queue of the Active Object
+ *
+ * @param self Pointer to the Active Object
+ * @param eventHandlerCb Callback to handle queue event, returns next state
+ * @param transitionToNextStateCb Callback to transition to the next state
+ * @param hasEmptyQueueCb Callback to handle empty queue
+ *
+ * ####Example:
+ * @code
+ * // Processing the event queue:
+ * MY_ACTIVE_OBJECT_ProcessQueue(&myObject, myEventHandler, myTransitionCb, myEmptyQueueHandler); \
+ * @endcode
+ */
+void ACTIVE_OBJECT_T_ProcessQueue(ACTIVE_OBJECT_T *const self, EVENT_T##_HANDLER_F eventHandlerCb, STATE_T_TRANSITION_F transitionToNextStateCb, ACTIVE_OBJECT_T_HAS_EMPTY_QUEUE_F hasEmptyQueueCb)
+
+#endif
+
 #endif //ACTIVE_OBJECT_H
+
+
