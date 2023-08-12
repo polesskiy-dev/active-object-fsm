@@ -2,7 +2,7 @@
 
 #include "event/event.h"
 #include "queue/queue.h"
-#include "active-object/active-object.h"
+#include "active-object/active_object.h"
 
 DECLARE_QUEUE(int, QUEUE_MAX_CAPACITY) ;
 

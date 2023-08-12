@@ -1,8 +1,8 @@
 #include "stdio.h"
 #include "stdint.h"
 
-#include "../../src/queue/queue.h"
-#include "../../src/active-object/active-object.h"
+#include "../../src/active-object/active_object.h"
+#include "../../src/active-object/active_object_impl.h"
 
 #define BLINKY_AO                   BLINKY_AO
 #define BLINKY_QUEUE_MAX_CAPACITY   (8)
@@ -38,9 +38,10 @@ const char *const STATES_STRINGS[] = {
 };
 
 /**
- * Active Object Declarations
+ * Active Object
  */
 DECLARE_ACTIVE_OBJECT(BLINKY_AO, BLINKY_EVENT, BLINKY_STATE, void*, BLINKY_QUEUE_MAX_CAPACITY);
+ACTIVE_OBJECT_IMPLEMENTATION(BLINKY_AO, BLINKY_EVENT, BLINKY_STATE, void*, BLINKY_QUEUE_MAX_CAPACITY);
 
 /**
  * Application and local declarations
@@ -51,8 +52,6 @@ void runTasks();
 /** local FSM functions, */
 BLINKY_STATE LOCAL_FSM_GetNextState(BLINKY_AO * const activeObject, BLINKY_EVENT e);
 BLINKY_STATE LOCAL_FSM_ProcessEvent(BLINKY_AO * const activeObject, BLINKY_EVENT e);
-
-// TODO get rid of INIT state
 
 int main(void) {
     BLINKY_AO_Ctor(&blinkyActiveObject, AO_BLINKY_ID, BLINKY_NO_ST, NULL);

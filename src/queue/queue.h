@@ -3,7 +3,12 @@
  *
  * @version 0.0.1
  * @author apolisskyi
- * @brief Template Queue for Events
+ *
+ * @brief Template Queue for a given data type
+ *
+ * @details This queue implementation is based on a circular queue, also known as a circular buffer.
+ * It utilizes a fixed-size array and employs the concept of wrapping around the indices to achieve a circular behavior.
+ * The circular nature allows efficient utilization of space without wasting memory.
  */
 
 #ifndef QUEUE_H
@@ -17,17 +22,102 @@
 #define QUEUE_MAX_CAPACITY  (16)
 #define EMPTY_QUEUE         (0)
 
-// TODO check how to Doxygen internal template functions
+/**
+ * @struct QUEUE_##T
+ */
 
 /**
- * @brief Declare a queue template for a given data type.
+ * @fn void QUEUE_##T##_Ctor(QUEUE_##T *const q)
+ * @brief Queue constructor.
  *
- * @param T The data type for the elements in the queue.
+ * @param q Pointer to the queue to be initialized.
+ *
+ * @example
+ * QUEUE_int q;
+ * QUEUE_int_Ctor(&q);
+ */
+
+/**
+ * @fn void QUEUE_##T##_Enqueue(QUEUE_##T *const q, T item)
+ * @brief Enqueues an element into the queue.
+ *
+ * @param q Pointer to the queue.
+ * @param item The item to be enqueued.
+ *
+ * @example
+ * QUEUE_int q;
+ * QUEUE_int_Ctor(&q);
+ * QUEUE_int_Enqueue(&q, 5);
+ */
+
+/**
+ * @fn T QUEUE_##T##_Dequeue(QUEUE_##T *const q)
+ * @brief Dequeues an element from the queue.
+ *
+ * @param q Pointer to the queue.
+ * @return The dequeued item.
+ *
+ * @example
+ * QUEUE_int q;
+ * QUEUE_int_Ctor(&q);
+ * QUEUE_int_Enqueue(&q, 5);
+ * int item = QUEUE_int_Dequeue(&q);
+ */
+
+/**
+ * @fn int QUEUE_##T##_GetSize(QUEUE_##T *const q)
+ * @brief Gets the current size of the queue.
+ *
+ * @param q Pointer to the queue.
+ * @return The current size of the queue.
+ *
+ * @example
+ * QUEUE_int q;
+ * QUEUE_int_Ctor(&q);
+ * QUEUE_int_Enqueue(&q, 5);
+ * int size = QUEUE_int_GetSize(&q);  // size will be 1
+ */
+
+/**
+ * @fn T QUEUE_##T##_Peek(QUEUE_##T *const q)
+ * @brief Peeks at the front element of the queue.
+ *
+ * @param q Pointer to the queue.
+ * @return The element at the front of the queue.
+ *
+ * @example
+ * QUEUE_int q;
+ * QUEUE_int_Ctor(&q);
+ * QUEUE_int_Enqueue(&q, 5);
+ * int frontItem = QUEUE_int_Peek(&q);  // frontItem will be 5
+ */
+
+/**
+ * @fn bool QUEUE_##T##_IsFull(QUEUE_##T *const q)
+ * @brief Checks if the queue is full.
+ *
+ * @param q Pointer to the queue.
+ * @return `true` if the queue is full, `false` otherwise.
+ *
+ * @example
+ * QUEUE_int q;
+ * QUEUE_int_Ctor(&q);
+ * for (int i = 0; i < 10; i++) {
+ *     QUEUE_int_Enqueue(&q, i);
+ * }
+ * bool isFull = QUEUE_int_IsFull(&q);  // isFull will be true
+ */
+
+/**
+ * @def DECLARE_QUEUE(T, maxQueueCapacity)
+ * Declares a generic queue for the type `T` with a maximum capacity of `maxQueueCapacity`.
+ *
+ * @param T The data type of the elements in the queue.
  * @param maxQueueCapacity max queue capacity (size), should always be a power of 2, not more than 128 (int8)
  *
- * @details This queue implementation is based on a circular queue, also known as a circular buffer.
- * It utilizes a fixed-size array and employs the concept of wrapping around the indices to achieve a circular behavior.
- * The circular nature allows efficient utilization of space without wasting memory.
+ * @example
+ * // Declare a queue for integers with a maximum capacity of 10
+ * DECLARE_QUEUE(int, 10);
  */
 #define DECLARE_QUEUE(T, maxQueueCapacity) \
     typedef struct { \
@@ -35,95 +125,11 @@
         int8_t rear; \
         T elements[maxQueueCapacity]; \
     } QUEUE_##T; \
-    \
-    /**
-     * @brief Initialize the queue.
-     *
-     * @tparam T
-     * @param [out] q Pointer to the queue to be initialized.
-     */ \
-    void QUEUE_##T##_Ctor(QUEUE_##T *const q) { \
-        q->front = -1; \
-        q->rear = -1; \
-    } \
-    \
-    /**
-     * @brief Enqueue an element into the queue.
-     *
-     * @tparam T
-     * @param [in/out] q Pointer to the queue.
-     * @param [in] item The item to be enqueued.
-     */ \
-    void QUEUE_##T##_Enqueue(QUEUE_##T *const q, T item) { \
-        if (((q->rear + 1) % (maxQueueCapacity)) == q->front) { \
-            printf("Queue is full. Cannot enqueue.\n"); \
-            return; \
-        } \
-        \
-        q->rear = (q->rear + 1) % (maxQueueCapacity); \
-        q->elements[q->rear] = item; \
-        if (q->front == -1) { \
-            q->front = 0; \
-        } \
-    } \
-    \
-    /**
-     * @brief Dequeue an element from the queue.
-     *
-     * @tparam T
-     * @param [in/out] q Pointer to the queue.
-     * @return The dequeued item.
-     */ \
-    T QUEUE_##T##_Dequeue(QUEUE_##T *const q) { \
-        if (q->front == -1) { \
-            printf("Queue is empty. Cannot dequeue.\n"); \
-            return (T){0}; \
-        } \
-        \
-        T item = q->elements[q->front]; \
-        if (q->front == q->rear) { \
-            q->front = -1; \
-            q->rear = -1; \
-        } else { \
-            q->front = (q->front + 1) % (maxQueueCapacity); \
-        } \
-        \
-        return item; \
-    } \
-    \
-    /**
-     * @brief Get the current size of the queue.
-     *
-     * @tparam T
-     * @param [in/out] q Pointer to the queue.
-     * @return The current size of the queue.
-     */ \
-    int QUEUE_##T##_GetSize(QUEUE_##T *const q) { \
-        if (q->front == -1) { \
-            return 0; \
-        } \
-        \
-        if (q->rear >= q->front) { \
-            return q->rear - q->front + 1; \
-        } else { \
-            return ((maxQueueCapacity) - q->front) + (q->rear + 1); \
-        } \
-    } \
-    \
-    /**
-     * @brief Peek at the front element of the queue.
-     *
-     * @tparam T
-     * @param [in/out] q Pointer to the queue.
-     * @return The element at the front of the queue.
-     */ \
-    T QUEUE_##T##_Peek(QUEUE_##T *const q) { \
-        if (q->front == -1) { \
-            printf("Queue is empty. Cannot peek.\n"); \
-            return (T){0}; \
-        } \
-        \
-        return q->elements[q->front]; \
-    }
+    void QUEUE_##T##_Ctor(QUEUE_##T *const q); \
+    void QUEUE_##T##_Enqueue(QUEUE_##T *const q, T item); \
+    T QUEUE_##T##_Dequeue(QUEUE_##T *const q); \
+    int QUEUE_##T##_GetSize(QUEUE_##T *const q);          \
+    T QUEUE_##T##_Peek(QUEUE_##T *const q); \
+bool QUEUE_##T##_IsFull(QUEUE_##T *const q);
 
 #endif

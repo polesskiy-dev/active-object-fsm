@@ -1,7 +1,7 @@
 #include "stdint.h"
 
 #include "../../libraries/Unity/src/unity.h"
-#include "../../src/active-object/active-object.h"
+#include "../../src/active-object/active_object.h"
 
 typedef enum {
     STATE_INIT,
