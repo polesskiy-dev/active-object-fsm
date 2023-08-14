@@ -20,6 +20,10 @@ html
 *.elf
 *.test
 
+# test coverage
+*.gcda
+*.gcno
+
 # Linker output
 *.ilk
 *.map

@@ -1,5 +1,5 @@
 # Compiler
-CC = gcc
+CC = gcc -fprofile-arcs -ftest-coverage
 
 # Directories
 SRC_DIR = ../src

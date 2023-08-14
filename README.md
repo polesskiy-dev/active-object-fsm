@@ -1,4 +1,6 @@
 ![CI Status](https://github.com/polesskiy-dev/active-object-fsm/actions/workflows/ci.yml/badge.svg?branch=main)
+[![Documentation](https://img.shields.io/badge/docs-Doxygen-blue.svg)](https://polesskiy-dev.github.io/active-object-fsm/)
+
 # active-object-fsm
 Minimalistic implementation of Active Object pattern + FSM for embedded systems.
 
