@@ -4,6 +4,7 @@
 # Compiled
 build
 bin
+main
 
 # Doxyfile
 html

@@ -4,6 +4,7 @@
 #include "../../src/active-object/active_object.h"
 #include "../../src/active-object/active_object_impl.h"
 #include "../../src/fsm/fsm.h"
+#include "../../src/fsm/fsm_impl.h"
 
 #define REQUEST_AO                      REQUEST_AO
 #define REQUEST_AO_ID                   (0)
@@ -45,6 +46,7 @@ typedef struct {
 DECLARE_ACTIVE_OBJECT(REQUEST_AO, REQUEST_EVENT, REQUEST_STATE, REQUEST_AO_FIELDS, REQUEST_QUEUE_MAX_CAPACITY);
 ACTIVE_OBJECT_IMPLEMENTATION(REQUEST_AO, REQUEST_EVENT, REQUEST_STATE, REQUEST_AO_FIELDS, REQUEST_QUEUE_MAX_CAPACITY);
 DECLARE_FSM(REQUEST_AO, REQUEST_EVENT, REQUEST_STATE, REQUEST_SIG_MAX, REQUEST_ST_MAX);
+FSM_IMPLEMENTATION(REQUEST_AO, REQUEST_EVENT, REQUEST_STATE, REQUEST_SIG_MAX, REQUEST_ST_MAX);
 
 /**
  * Application and local declarations
