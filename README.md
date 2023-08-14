@@ -25,7 +25,7 @@ Minimalistic implementation of Active Object pattern + FSM for embedded systems.
 
 Preprocessor templates allow strict typings and debugger suggestions, all types and enums have human-readable names, e.g. from [Request demo](./examples/request-fsm/README.md):
 
-![types](./docs/active-object-typings.png)
+![types](https://raw.githubusercontent.com/polesskiy-dev/active-object-fsm/main/docs/active-object-typings.png)
 
 TODO: make naming conventions e.g.:
 
