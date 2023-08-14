@@ -1,3 +1,4 @@
+![CI Status](https://github.com/polesskiy-dev/active-object-fsm/actions/workflows/ci.yml/badge.svg?branch=main)
 # active-object-fsm
 Minimalistic implementation of Active Object pattern + FSM for embedded systems.
 

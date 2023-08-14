@@ -29,5 +29,16 @@ jobs:
           enable_jekyll: false
           allow_empty_commit: false
           force_orphan: true
-          publish_branch: gh-pages      
+          publish_branch: gh-pages
 
+  run-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive
+      - name: Install dependencies
+        run: sudo apt-get install gcc make
+      - name: Run tests
+        run: make -C test tests
