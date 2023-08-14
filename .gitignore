@@ -5,6 +5,7 @@
 build
 bin
 main
+test/**/run_tests
 
 # Doxyfile
 html
@@ -17,6 +18,7 @@ html
 *.ko
 *.obj
 *.elf
+*.test
 
 # Linker output
 *.ilk
