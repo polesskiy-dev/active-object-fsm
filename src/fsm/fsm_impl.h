@@ -8,15 +8,16 @@
 STATE_T ACTIVE_OBJECT_T##_FSM_ProcessEventToNextState(\
         ACTIVE_OBJECT_T *const activeObject, \
         EVENT_T event,                                                       \
-        EVENT_T##_HANDLE_F transitionTable[statesMax][eventsMax]             \
+        EVENT_T##_HANDLE_F transitionTable[statesMax][eventsMax],                    \
+        STATE_T##_HANDLE_FUNCTIONS stateHandlersList[statesMax]                 \
     ) {                                                                      \
         STATE_T currState = activeObject->state; \
         EVENT_T##_HANDLE_F stateHandler = transitionTable[currState][event.sig];     \
                                                                              \
         assert(NULL != stateHandler);                                        \
                                                                              \
-        STATE_T nextState = stateHandler(activeObject, event);               \
-                                                                             \
+        STATE_T nextState = stateHandler(activeObject, event);                      \
+                                                                                    \
         return nextState;                                                    \
     };
 

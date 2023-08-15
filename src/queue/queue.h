@@ -7,6 +7,18 @@
  * It utilizes a fixed-size array and employs the concept of wrapping around the indices to achieve a circular behavior.
  * The circular nature allows efficient utilization of space without wasting memory.
  *
+ *  * ###Example:
+ * @code
+ * #include "queue.h"
+ * #include "queue_impl.h"
+ *
+ * #define QUEUE_MAX_CAPACITY  (16)
+ * typedef enum SIGNALS { FIRST_SIGNAL, SIGNALS_MAX }
+ * typedef struct TEvent { SIGNALS sig }
+ *
+ * DECLARE_QUEUE(TEvent, QUEUE_MAX_CAPACITY);
+ * @endcode
+ *
  * @author apolisskyi
  */
 

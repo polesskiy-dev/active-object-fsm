@@ -89,21 +89,21 @@ void integration_test_active_object_with_fsm_and_queue(void) {
     TEST_ASSERT_EQUAL(1, QUEUE_MockEvent_GetSize(&ao.queue));
 
     // Process Event with FSM
-    MockState nextState = MockActiveObject_FSM_ProcessEventToNextState(&ao, e1, stateTransitionTable);
+    MockState nextState = MockActiveObject_FSM_ProcessEventToNextState(&ao, e1, stateTransitionTable, NULL);
     TEST_ASSERT_EQUAL(MOCK_STATE_RUNNING, nextState);
     ao.state = nextState;  // Update the actual state of the active object
 
     // Dispatching and processing a second event
     MockEvent e2 = { .sig = MOCK_EVENT_B_SIG };
     MockActiveObject_Dispatch(&ao, e2);
-    nextState = MockActiveObject_FSM_ProcessEventToNextState(&ao, e2, stateTransitionTable);
+    nextState = MockActiveObject_FSM_ProcessEventToNextState(&ao, e2, stateTransitionTable, NULL);
     TEST_ASSERT_EQUAL(MOCK_STATE_PAUSED, nextState);
     ao.state = nextState;  // Update the actual state of the active object
 
     // Dispatching and processing a third event
     MockEvent e3 = { .sig = MOCK_EVENT_C_SIG };
     MockActiveObject_Dispatch(&ao, e3);
-    nextState = MockActiveObject_FSM_ProcessEventToNextState(&ao, e3, stateTransitionTable);
+    nextState = MockActiveObject_FSM_ProcessEventToNextState(&ao, e3, stateTransitionTable, NULL);
     TEST_ASSERT_EQUAL(MOCK_STATE_IDLE, nextState);
     ao.state = nextState;  // Update the actual state of the active object
 }
