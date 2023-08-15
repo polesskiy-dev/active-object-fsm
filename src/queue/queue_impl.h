@@ -9,21 +9,22 @@
         q->rear = -1; \
     } \
     \
-    void QUEUE_##T##_Enqueue(QUEUE_##T *const q, T item) { \
+    bool QUEUE_##T##_Enqueue(QUEUE_##T *const q, T item) { \
         if (((q->rear + 1) % maxQueueCapacity) == q->front) { \
-            printf("Queue is full. Cannot enqueue.\n"); \
-            return; \
+            /* Queue is full. Cannot enqueue.*/ \
+            return false; \
         } \
         q->rear = (q->rear + 1) % maxQueueCapacity; \
         q->elements[q->rear] = item; \
         if (q->front == -1) { \
             q->front = 0; \
         } \
+        return true; \
     } \
     \
     T QUEUE_##T##_Dequeue(QUEUE_##T *const q) { \
         if (q->front == -1) { \
-            printf("Queue is empty. Cannot dequeue.\n"); \
+            /* Queue is empty. Cannot dequeue. */ \
             return (T){0}; \
         } \
         T item = q->elements[q->front]; \
@@ -49,7 +50,7 @@
     \
     T QUEUE_##T##_Peek(QUEUE_##T *const q) { \
         if (q->front == -1) { \
-            printf("Queue is empty. Cannot peek.\n"); \
+            /* "Queue is empty. Cannot peek.\n"); */ \
             return (T){0}; \
         } \
         return q->elements[q->front]; \

@@ -41,11 +41,11 @@
         T elements[maxQueueCapacity]; \
     } QUEUE_##T; \
     void QUEUE_##T##_Ctor(QUEUE_##T *const q); \
-    void QUEUE_##T##_Enqueue(QUEUE_##T *const q, T item); \
+    bool QUEUE_##T##_Enqueue(QUEUE_##T *const q, T item); \
     T QUEUE_##T##_Dequeue(QUEUE_##T *const q); \
     int QUEUE_##T##_GetSize(QUEUE_##T *const q);          \
     T QUEUE_##T##_Peek(QUEUE_##T *const q); \
-bool QUEUE_##T##_IsFull(QUEUE_##T *const q);
+    bool QUEUE_##T##_IsFull(QUEUE_##T *const q);
 
 /**
  * @struct QUEUE_T
@@ -78,6 +78,8 @@ void QUEUE_T_Ctor(QUEUE_T *const q);
  * @param q Pointer to the queue.
  * @param item The item to be enqueued.
  *
+ * @return `true` if element enqueued (queue wasn't full), `false` otherwise.
+ *
  * ####Example:
  * @code
  * QUEUE_int q;
@@ -85,13 +87,13 @@ void QUEUE_T_Ctor(QUEUE_T *const q);
  * QUEUE_int_Enqueue(&q, 5);
  * @endcode
  */
-void QUEUE_T_Enqueue(QUEUE_T *const q, T item);
+bool QUEUE_T_Enqueue(QUEUE_T *const q, T item);
 
 /**
  * @brief Dequeues an element from the queue.
  *
  * @param q Pointer to the queue.
- * @return The dequeued item.
+ * @return The dequeued item or NULL
  *
  * ####Example:
  * @code
@@ -123,7 +125,7 @@ int QUEUE_T_GetSize(QUEUE_T *const q);
  * @brief Peeks at the front element of the queue.
  *
  * @param q Pointer to the queue.
- * @return The element at the front of the queue.
+ * @return The element at the front of the queue or NULL
  *
  * ####Example:
  * @code
