@@ -17,14 +17,20 @@
     void ACTIVE_OBJECT_T##_Dispatch(ACTIVE_OBJECT_T *const self, EVENT_T event) { \
         if (QUEUE_##EVENT_T##_IsFull(&self->queue)) return; /* TODO Handle error, e.g., logging */ \
         QUEUE_##EVENT_T##_Enqueue(&self->queue, event); \
-    } \
+    }                                                                                               \
+                                                                                                    \
+    /* TODO add non basic transition, handle start, traverse, exit state functions */ \
     \
     bool ACTIVE_OBJECT_T##_basicTransitionToNextState(ACTIVE_OBJECT_T *const self, STATE_T nextState) { \
         self->state = nextState; \
         return true; \
     } \
     \
-    void ACTIVE_OBJECT_T##_ProcessQueue(ACTIVE_OBJECT_T *const self, EVENT_T##_HANDLER_F eventHandlerCb, STATE_T##_TRANSITION_F transitionToNextStateCb, ACTIVE_OBJECT_T##HAS_EMPTY_QUEUE_F hasEmptyQueueCb) { \
+    void ACTIVE_OBJECT_T##_ProcessQueue(                                                            \
+            ACTIVE_OBJECT_T *const self,                                \
+            EVENT_T##_HANDLER_F eventHandlerCb,                                                             \
+            STATE_T##_TRANSITION_F transitionToNextStateCb,                                                 \
+            ACTIVE_OBJECT_T##HAS_EMPTY_QUEUE_F hasEmptyQueueCb) { \
         bool isEmptyQueue = EMPTY_QUEUE == QUEUE_##EVENT_T##_GetSize(&self->queue); \
         if (isEmptyQueue) return hasEmptyQueueCb(self); \
         EVENT_T e = QUEUE_##EVENT_T##_Dequeue(&self->queue); \

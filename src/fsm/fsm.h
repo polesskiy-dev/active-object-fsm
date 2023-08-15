@@ -52,8 +52,9 @@ typedef struct {                                                              \
 \
 STATE_T ACTIVE_OBJECT_T##_FSM_ProcessEventToNextState(\
         ACTIVE_OBJECT_T *const activeObject, \
-        EVENT_T event,                                                       \
-        EVENT_T##_HANDLE_F transitionTable[statesMax][eventsMax]             \
+        EVENT_T event,                                                          \
+        EVENT_T##_HANDLE_F transitionTable[statesMax][eventsMax],                \
+        STATE_T##_HANDLE_FUNCTIONS stateHandlersList[statesMax]                 \
     );
 
 /**

@@ -59,19 +59,19 @@ void test_fsm_process_event_to_next_state(void) {
     // Process MOCK_EVENT_A_SIG while in MOCK_STATE_IDLE -> should transition to MOCK_STATE_RUNNING
     ao.state = MOCK_STATE_IDLE;
     MockEvent e = { .sig = MOCK_EVENT_A_SIG };
-    MockState nextState = MockActiveObject_FSM_ProcessEventToNextState(&ao, e, transitionTable);
+    MockState nextState = MockActiveObject_FSM_ProcessEventToNextState(&ao, e, transitionTable, NULL);
     TEST_ASSERT_EQUAL(MOCK_STATE_RUNNING, nextState);
 
     // Process MOCK_EVENT_B_SIG while in MOCK_STATE_RUNNING -> should transition to MOCK_STATE_PAUSED
     ao.state = MOCK_STATE_RUNNING;
     e.sig = MOCK_EVENT_B_SIG;
-    nextState = MockActiveObject_FSM_ProcessEventToNextState(&ao, e, transitionTable);
+    nextState = MockActiveObject_FSM_ProcessEventToNextState(&ao, e, transitionTable, NULL);
     TEST_ASSERT_EQUAL(MOCK_STATE_PAUSED, nextState);
 
     // Process MOCK_EVENT_C_SIG while in MOCK_STATE_PAUSED -> should transition to MOCK_STATE_IDLE
     ao.state = MOCK_STATE_PAUSED;
     e.sig = MOCK_EVENT_C_SIG;
-    nextState = MockActiveObject_FSM_ProcessEventToNextState(&ao, e, transitionTable);
+    nextState = MockActiveObject_FSM_ProcessEventToNextState(&ao, e, transitionTable, NULL);
     TEST_ASSERT_EQUAL(MOCK_STATE_IDLE, nextState);
 }
 
