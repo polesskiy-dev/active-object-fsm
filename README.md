@@ -42,6 +42,8 @@ TODO: make naming conventions e.g.:
     - camelCase for local variables
 
 ## Side notes
+
+### Docs diagrams
 Diagrams are generated with help of [Graphviz]() .dot engine.
 To generate locally:
 ```
@@ -49,5 +51,11 @@ $ brew install graphviz # install Graphviz (MacOS)
 $ for file in ./**/*.gv; do dot -Tsvg "$file" > "${file%.gv}.svg"; done # dot -Tsvg file.gv > file.svg  
 ```
 
+### TODO: Code coverage
+It seems that it's hard to check coverage on macros.
+
+Based on [Codecov](https://about.codecov.io/):
+
+[How to Set Up Codecov with C and GitHub Actions in 2022](https://about.codecov.io/blog/how-to-set-up-codecov-with-c-and-github-actions/)
 
 

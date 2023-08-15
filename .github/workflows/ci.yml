@@ -42,9 +42,3 @@ jobs:
         run: sudo apt-get install gcc make
       - name: Run tests
         run: make -C test tests
-      - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@v3
-        with:
-          verbose: true
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
