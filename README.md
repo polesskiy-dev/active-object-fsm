@@ -28,21 +28,24 @@ Preprocessor templates allow strict typings and debugger suggestions, all types 
 
 ![types](https://raw.githubusercontent.com/polesskiy-dev/active-object-fsm/main/docs/active-object-typings.png)
 
-TODO: make naming conventions e.g.:
-
-- types
-    - CAPITAL_CASE_T for template types
-    - CAPITAL_CASE for enums
-    - CAPITAL_CASE for typedefs (???)
-    - CAPITAL_CASE for #define
-- functions
-    - MODULE_PascalCase for module public functions
-    - camelCase for module private functions
-- variables
-    - MODULE_camelCase for module global variables
-    - camelCase for local variables
-
 ## Side notes
+
+### Naming conventions
+
+- file names
+  - snake_case
+- variables
+  - MODULE_camelCase for module global variables
+  - camelCase for local variables
+- functions
+  - MODULE_PascalCase for module public functions
+  - _camelCase for module private functions
+- types
+  - UPPER_CASE_T for macros types
+  - UPPER_CASE for #define or constants
+  - UPPER_CASE for enums
+  - TPascalCase for typedef struct
+  - PascalCase for struct
 
 ### Docs diagrams
 Diagrams are generated with help of [Graphviz]() .dot engine.

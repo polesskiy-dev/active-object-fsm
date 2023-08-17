@@ -2,7 +2,7 @@
 #define ACTIVE_OBJECT_IMPL_H
 
 #include "./active_object.h"
-#include "../queue/queue_impl.h"
+//#include "../queue/queue_impl.h"
 
 #define ACTIVE_OBJECT_IMPLEMENTATION(ACTIVE_OBJECT_T, EVENT_T, STATE_T, FIELDS_T, maxQueueCapacity) \
     QUEUE_IMPLEMENTATION(EVENT_T, maxQueueCapacity); \

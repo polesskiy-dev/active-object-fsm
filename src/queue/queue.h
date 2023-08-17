@@ -1,160 +1,182 @@
 /**
  * @file queue.h
  *
- * @brief Template Queue for a given data type
+ * @brief Generic Queue for Embedded Systems.
  *
  * @details This queue implementation is based on a circular queue, also known as a circular buffer.
  * It utilizes a fixed-size array and employs the concept of wrapping around the indices to achieve a circular behavior.
  * The circular nature allows efficient utilization of space without wasting memory.
  *
+ * Key features include:
+ *  - Statically allocated memory, ensuring predictable memory usage.
+ *  - FIFO (First In, First Out) data structure.
+ *  - Functions to check if the queue is full or empty.
+ *  - Peek functionality to inspect the front of the queue without removal.
+ *
+ * To use the queue module, a specific data type `QUEUE_ELEMENT_T` should be defined
+ * before including this header. This type represents the datatype the queue will store.
+ *
+ * ###Example:
+ * @code
+ * typedef struct {
+ *     int data;
+ * } QUEUE_ELEMENT_T;
+ *
+ * #define QUEUE_ELEMENT_T QUEUE_ELEMENT_T
+ * #include "queue.h"
+ * @endcode
+ *
+ * For further details on individual functions, refer to their respective documentation.
+ *
+ * @note This queue does not dynamically allocate memory and relies on a predefined
+ * maximum size (`MAX_QUEUE_CAPACITY`). Ensure that the queue's capacity meets the
+ * application's requirements.
+ *
  * @author apolisskyi
  */
+
 
 #ifndef QUEUE_H
 #define QUEUE_H
 
 #include <stdint.h>
 #include <stdbool.h>
-#include <assert.h>
+#include <stdio.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#ifndef QUEUE_ELEMENT_T
+#error "Please define QUEUE_ELEMENT_T before including queue.h"
+#define QUEUE_ELEMENT_T int // just for debug
+#endif
+
+#ifndef MAX_QUEUE_CAPACITY
 /** suggested max queue capacity */
-#define QUEUE_MAX_CAPACITY  (16)
-#define EMPTY_QUEUE         (0)
+#define MAX_QUEUE_CAPACITY  (16)
+#endif
 
 /**
- * @def DECLARE_QUEUE(T, maxQueueCapacity)
- * @brief Declares a generic queue for the type `T` with a maximum capacity of `maxQueueCapacity`.
+* @brief Queue struct.
+*
+* Represents a queue using a circular buffer mechanism.
+* The queue's capacity is defined by `MAX_QUEUE_CAPACITY`.
+*
+* @var front - Index of the front element in the queue.
+* @var rear - Index of the rear element in the queue.
+* @var elements[MAX_QUEUE_CAPACITY] - Holds the elements of the queue.
+*/
+typedef struct {
+    int8_t front;
+    int8_t rear;
+    QUEUE_ELEMENT_T elements[MAX_QUEUE_CAPACITY];
+} TQueue;
+
+/**
+ * @brief Constructor. Initializes the queue.
+ * @attention this constructor does not clear out the elements
  *
- * @tparam T The data type of the elements in the queue.
- * @tparam maxQueueCapacity max queue capacity (size), should always be a power of 2, not more than 128 (int8)
+ * @param q Pointer to the queue.
  *
- * ####Example:
+ * ###Example:
  * @code
- * // Declare a queue for integers with a maximum capacity of 10
- * DECLARE_QUEUE(int, 10);
+ * TQueue q;
+ * QUEUE_Ctor(&q);
  * @endcode
- */
-#define DECLARE_QUEUE(T, maxQueueCapacity) \
-    typedef struct { \
-        int8_t front; \
-        int8_t rear; \
-        T elements[maxQueueCapacity]; \
-    } QUEUE_##T; \
-    void QUEUE_##T##_Ctor(QUEUE_##T *const q); \
-    bool QUEUE_##T##_Enqueue(QUEUE_##T *const q, T item); \
-    T QUEUE_##T##_Dequeue(QUEUE_##T *const q); \
-    int QUEUE_##T##_GetSize(QUEUE_##T *const q);          \
-    T QUEUE_##T##_Peek(QUEUE_##T *const q); \
-    bool QUEUE_##T##_IsFull(QUEUE_##T *const q);
-
-/**
- * @struct QUEUE_T
- * @brief Struct for defining the Queue
- *
- * @param front head T element
- * @param rear tail T element
- * @param elements array of T elements, static size
- */
-
-/* should never be defined, for documentation purpose only */
-#ifdef DOXYGEN_ONLY
-
-/**
- * @brief Queue constructor.
- *
- * @param q Pointer to the queue to be initialized.
- *
- * ####Example:
- * @code
- * QUEUE_int q;
- * QUEUE_int_Ctor(&q);
- * @endcode
- */
-void QUEUE_T_Ctor(QUEUE_T *const q);
+*/
+void QUEUE_Ctor(TQueue *const q);
 
 /**
  * @brief Enqueues an element into the queue.
  *
  * @param q Pointer to the queue.
- * @param item The item to be enqueued.
+ * @param elem Element to enqueue.
+ * @return true if the enqueue operation was successful, false otherwise e.g. max capacity reach.
  *
- * @return `true` if element enqueued (queue wasn't full), `false` otherwise.
- *
- * ####Example:
+ * ###Example:
  * @code
- * QUEUE_int q;
- * QUEUE_int_Ctor(&q);
- * QUEUE_int_Enqueue(&q, 5);
+ * QUEUE_ELEMENT_T elem = {.data = 1};
+ * bool success = QUEUE_Enqueue(&q, elem);
  * @endcode
  */
-bool QUEUE_T_Enqueue(QUEUE_T *const q, T item);
+bool QUEUE_Enqueue(TQueue *const q, QUEUE_ELEMENT_T elem);
 
 /**
  * @brief Dequeues an element from the queue.
  *
  * @param q Pointer to the queue.
- * @return The dequeued item or NULL
+ * @return The dequeued element. Check with QUEUE_IsEmpty before using this function.
  *
- * ####Example:
+ * ###Example:
  * @code
- * QUEUE_int q;
- * QUEUE_int_Ctor(&q);
- * QUEUE_int_Enqueue(&q, 5);
- * int item = QUEUE_int_Dequeue(&q);
+ * if (!QUEUE_IsEmpty(&q)) {
+ *     QUEUE_ELEMENT_T dequeuedElem = QUEUE_Dequeue(&q);
+ * }
  * @endcode
  */
-T QUEUE_T_Dequeue(QUEUE_T *const q);
+QUEUE_ELEMENT_T QUEUE_Dequeue(TQueue *const q);
 
 /**
- * @brief Gets the current size of the queue.
+ * @brief Retrieves the size of the queue.
  *
  * @param q Pointer to the queue.
  * @return The current size of the queue.
  *
- * ####Example:
+ * ###Example:
  * @code
- * QUEUE_int q;
- * QUEUE_int_Ctor(&q);
- * QUEUE_int_Enqueue(&q, 5);
- * int size = QUEUE_int_GetSize(&q);  // size will be 1
+ * int8_t size = QUEUE_GetSize(&q);
  * @endcode
  */
-int QUEUE_T_GetSize(QUEUE_T *const q);
+int8_t QUEUE_GetSize(TQueue *const q);
 
 /**
- * @brief Peeks at the front element of the queue.
+ * @brief Peeks at the front element without dequeuing it.
  *
  * @param q Pointer to the queue.
- * @return The element at the front of the queue or NULL
+ * @return The front element. Check with QUEUE_IsEmpty before using this function.
  *
- * ####Example:
+ * ###Example:
  * @code
- * QUEUE_int q;
- * QUEUE_int_Ctor(&q);
- * QUEUE_int_Enqueue(&q, 5);
- * int frontItem = QUEUE_int_Peek(&q);  // frontItem will be 5
+ * if (!QUEUE_IsEmpty(&q)) {
+ *     QUEUE_ELEMENT_T frontElem = QUEUE_Peek(&q);
+ * }
  * @endcode
  */
-T QUEUE_T_Peek(QUEUE_T *const q)
+QUEUE_ELEMENT_T QUEUE_Peek(TQueue *const q);
 
 /**
  * @brief Checks if the queue is full.
  *
  * @param q Pointer to the queue.
- * @return `true` if the queue is full, `false` otherwise.
+ * @return True if the queue is full, false otherwise.
  *
- * ####Example:
+ * ###Example:
  * @code
- * QUEUE_int q;
- * QUEUE_int_Ctor(&q);
- * for (int i = 0; i < 10; i++) {
- *     QUEUE_int_Enqueue(&q, i);
+ * if (QUEUE_IsFull(&q)) {
+ *     // Handle the queue full scenario.
  * }
- * bool isFull = QUEUE_int_IsFull(&q);  // isFull will be true
  * @endcode
  */
-bool QUEUE_T_IsFull(QUEUE_T *const q);
+bool QUEUE_IsFull(TQueue *const q);
 
+/**
+ * @brief Checks if the queue is empty.
+ *
+ * @param q Pointer to the queue.
+ * @return True if the queue is empty, false otherwise.
+ *
+ * ###Example:
+ * @code
+ * if (QUEUE_IsEmpty(&q)) {
+ *     // Handle the queue empty scenario.
+ * }
+ * @endcode
+ */
+bool QUEUE_IsEmpty(TQueue *const q);
+
+#ifdef __cplusplus
+}
 #endif
 
 #endif

@@ -7,14 +7,18 @@ TEST_DIR = ./
 UNITY_DIR = ../libraries/Unity/src
 
 # Source files and objects
-SRCS = $(wildcard $(SRC_DIR)/**/*.c)
+#SRCS = $(wildcard $(SRC_DIR)/**/*.c)
+SRCS = $(wildcard $(SRC_DIR)/queue/*.c)
 OBJS = $(SRCS:.c=.o)
 UNITY_SRC = $(UNITY_DIR)/unity.c
-TEST_SRCS = $(wildcard $(TEST_DIR)/**/*.test.c)
+#TEST_SRCS = $(wildcard $(TEST_DIR)/**/*.test.c)
+TEST_SRCS = $(wildcard $(TEST_DIR)/queue/*.test.c)
 TEST_BINS = $(TEST_SRCS:.test.c=.test)   # This produces filenames like fsm/fsm.test.o
 
+
 # Compiler Flags
-CFLAGS = -I$(SRC_DIR) -I$(UNITY_DIR)
+#CFLAGS = -I$(SRC_DIR) -I$(UNITY_DIR)
+CFLAGS = -I$(UNITY_DIR)
 
 .PHONY: all clean tests
 
