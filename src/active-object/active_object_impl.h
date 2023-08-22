@@ -32,6 +32,7 @@
             STATE_T##_TRANSITION_F transitionToNextStateCb,                                                 \
             ACTIVE_OBJECT_T##HAS_EMPTY_QUEUE_F hasEmptyQueueCb) { \
         bool isEmptyQueue = EMPTY_QUEUE == QUEUE_##EVENT_T##_GetSize(&self->queue); \
+        /* TODO implement check for hasEmptyQueueCb existance */ \
         if (isEmptyQueue) return hasEmptyQueueCb(self); \
         EVENT_T e = QUEUE_##EVENT_T##_Dequeue(&self->queue); \
         STATE_T nextState = eventHandlerCb(self, e); \
