@@ -49,7 +49,10 @@
  * @tparam id ID value
  * @tparam maxQueueCapacity Queue capacity value
  *
- * @example DECLARE_ACTIVE_OBJECT(MY_ACTIVE_OBJECT, MY_EVENT, MY_STATE, MY_FIELDS, 16)
+ * ### Example:
+ * @code 
+ * DECLARE_ACTIVE_OBJECT(MY_ACTIVE_OBJECT, MY_EVENT, MY_STATE, MY_FIELDS, 16)
+ * @endcode
  */
 #define DECLARE_ACTIVE_OBJECT(ACTIVE_OBJECT_T, EVENT_T, STATE_T, FIELDS_T, maxQueueCapacity) \
     DECLARE_QUEUE(EVENT_T, maxQueueCapacity);                                                \
@@ -67,8 +70,9 @@
     \
     void ACTIVE_OBJECT_T##_Ctor(ACTIVE_OBJECT_T *const self, uint8_t id, STATE_T initialState, FIELDS_T fields); \
     void ACTIVE_OBJECT_T##_Dispatch(ACTIVE_OBJECT_T *const self, EVENT_T event); \
+    bool ACTIVE_OBJECT_T##_HasEmptyQueue(ACTIVE_OBJECT_T *const self); \
     bool ACTIVE_OBJECT_T##_basicTransitionToNextState(ACTIVE_OBJECT_T *const self, STATE_T nextState); \
-    void ACTIVE_OBJECT_T##_ProcessQueue(ACTIVE_OBJECT_T *const self, EVENT_T##_HANDLER_F eventHandlerCb, STATE_T##_TRANSITION_F transitionToNextStateCb, ACTIVE_OBJECT_T##HAS_EMPTY_QUEUE_F hasEmptyQueueCb);
+    void ACTIVE_OBJECT_T##_ProcessQueue(ACTIVE_OBJECT_T *const self, EVENT_T##_HANDLER_F eventHandlerCb, STATE_T##_TRANSITION_F transitionToNextStateCb);
 
 /**
  * @struct ACTIVE_OBJECT_T
@@ -90,7 +94,7 @@
  * @param initialState Initial state of the Active Object
  * @param fields User-defined fields
  *
- * ####Example:
+ * ### Example:
  * @code
  * // Create a new active object:
  * MY_ACTIVE_OBJECT myObject;
@@ -105,7 +109,7 @@ void ACTIVE_OBJECT_T_Ctor(ACTIVE_OBJECT_T *const self, uint8_t id, STATE_T initi
  * @param self Pointer to the Active Object
  * @param event Event to be dispatched
  *
- * ####Example:
+ * ### Example:
  * @code
  * // Dispatching an event to the active object:
  * MY_EVENT myEvent = { .sig=SOME_SIG };
@@ -115,21 +119,13 @@ void ACTIVE_OBJECT_T_Ctor(ACTIVE_OBJECT_T *const self, uint8_t id, STATE_T initi
 void ACTIVE_OBJECT_T##_Dispatch(ACTIVE_OBJECT_T *const self, EVENT_T event);
 
 /**
- * @brief Transition to the next state of the Active Object
- *
+ * @brief Check Active Object queue empty 
+ * 
  * @param self Pointer to the Active Object
- * @param nextState Next state to transition to
- *
- * TODO should be improved, temporary inline, handle here exit -> enter -> traverse for states, implementing Mealy&Moore Hybrid FSM
- *
- * ####Example:
- * @code
- * // Transition to a new state:
- * MY_STATE newState = ...;
- * MY_ACTIVE_OBJECT_basicTransitionToNextState(&myObject, newState);
- * @endcode
+ * 
+ * @return is queue empty
  */
-bool ACTIVE_OBJECT_T_basicTransitionToNextState(ACTIVE_OBJECT_T *const self, STATE_T nextState)
+bool ACTIVE_OBJECT_T##_HasEmptyQueue(ACTIVE_OBJECT_T *const self);
 
 /**
  * @brief Process the event queue of the Active Object
@@ -137,15 +133,14 @@ bool ACTIVE_OBJECT_T_basicTransitionToNextState(ACTIVE_OBJECT_T *const self, STA
  * @param self Pointer to the Active Object
  * @param eventHandlerCb Callback to handle queue event, returns next state
  * @param transitionToNextStateCb Callback to transition to the next state
- * @param hasEmptyQueueCb Callback to handle empty queue
  *
- * ####Example:
+ * ### Example:
  * @code
  * // Processing the event queue:
- * MY_ACTIVE_OBJECT_ProcessQueue(&myObject, myEventHandler, myTransitionCb, myEmptyQueueHandler); \
+ * if (!MY_ACTIVE_OBJECT_HasEmptyQueue(&myObject)) MY_ACTIVE_OBJECT_ProcessQueue(&myObject, myEventHandler, myTransitionCb); \
  * @endcode
  */
-void ACTIVE_OBJECT_T_ProcessQueue(ACTIVE_OBJECT_T *const self, EVENT_T##_HANDLER_F eventHandlerCb, STATE_T_TRANSITION_F transitionToNextStateCb, ACTIVE_OBJECT_T_HAS_EMPTY_QUEUE_F hasEmptyQueueCb)
+void ACTIVE_OBJECT_T_ProcessQueue(ACTIVE_OBJECT_T *const self, EVENT_T##_HANDLER_F eventHandlerCb, STATE_T_TRANSITION_F transitionToNextStateCb)
 
 #endif
 

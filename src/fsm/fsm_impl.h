@@ -13,12 +13,20 @@ STATE_T ACTIVE_OBJECT_T##_FSM_ProcessEventToNextState(\
     ) {                                                                      \
         STATE_T currState = activeObject->state; \
         EVENT_T##_HANDLE_F stateHandler = transitionTable[currState][event.sig];     \
-                                                                             \
-        assert(NULL != stateHandler);                                        \
+        \
+        /* try to avoid lack of state handlers, returns 0 (NO_STATE) */   \
+        if(NULL == stateHandler) return (STATE_T){0};        \
                                                                              \
         STATE_T nextState = stateHandler(activeObject, event);                      \
                                                                                     \
         return nextState;                                                    \
-    };
+    };\
+
+    /* TODO add non basic transition, handle start, traverse, exit state functions */ \
+    \
+    bool ACTIVE_OBJECT_T##_basicTransitionToNextState(ACTIVE_OBJECT_T *const self, STATE_T nextState) { \
+        self->state = nextState; \
+        return true; \
+    } \    
 
 #endif //FSM_IMPL_H

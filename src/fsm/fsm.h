@@ -55,7 +55,8 @@ STATE_T ACTIVE_OBJECT_T##_FSM_ProcessEventToNextState(\
         EVENT_T event,                                                          \
         EVENT_T##_HANDLE_F transitionTable[statesMax][eventsMax],                \
         STATE_T##_HANDLE_FUNCTIONS stateHandlersList[statesMax]                 \
-    );
+    );\
+bool ACTIVE_OBJECT_T##_FSM_BasicTransitionToNextState(ACTIVE_OBJECT_T *const activeObject, STATE_T nextState);\
 
 /**
  * @def DECLARE_GUARD(ACTIVE_OBJECT_T, EVENT_T, CONDITION_FUNCTION, ON_TRUE_FUNCTION, ON_FALSE_FUNCTION)
@@ -67,6 +68,11 @@ STATE_T ACTIVE_OBJECT_T##_FSM_ProcessEventToNextState(\
  * @tparam CONDITION_FUNCTION The function to evaluate the guard condition.
  * @tparam ON_TRUE_FUNCTION The function to be called if the guard condition evaluates to true.
  * @tparam ON_FALSE_FUNCTION The function to be called if the guard condition evaluates to false.
+ * 
+ * #### Example:
+ * @code
+ * // TODO
+ * @endcode
  */
 #define DECLARE_GUARD(ACTIVE_OBJECT_T, EVENT_T, CONDITION_FUNCTION, ON_TRUE_FUNCTION, ON_FALSE_FUNCTION) \
     REQUEST_STATE GUARD_##CONDITION_FUNCTION##_##ON_TRUE_FUNCTION##_##ON_FALSE_FUNCTION(ACTIVE_OBJECT_T *const activeObject, EVENT_T event) { \
@@ -79,6 +85,11 @@ STATE_T ACTIVE_OBJECT_T##_FSM_ProcessEventToNextState(\
  * @def GUARD(CONDITION_FUNCTION, ON_TRUE_FUNCTION, ON_FALSE_FUNCTION)
  * @brief Convenience macro to represent a specific guard function.
  * @details This macro simplifies the invocation of the declared guard function based on the provided CONDITION_FUNCTION, ON_TRUE_FUNCTION, and ON_FALSE_FUNCTION.
+ * 
+ * #### Example:
+ * @code
+ * // TODO
+ * @endcode
  */
 #define GUARD(CONDITION_FUNCTION, ON_TRUE_FUNCTION, ON_FALSE_FUNCTION) (GUARD_##CONDITION_FUNCTION##_##ON_TRUE_FUNCTION##_##ON_FALSE_FUNCTION)
 
@@ -92,9 +103,26 @@ STATE_T ACTIVE_OBJECT_T##_FSM_ProcessEventToNextState(\
  * @param event[in] - new event
  * @param transitionTable[in] - event handlers functions 2D array
  * @param stateHandleFunctionsList[in] - state handle functions array
- * @return next state
+ * @return next state or 0 in case of state handler lack in transitionTable
  */
 STATE_T ACTIVE_OBJECT_T_FSM_ProcessEventToNextState(ACTIVE_OBJECT_T *const activeObject, EVENT_T event, EVENT_T_HANDLE_F transitionTable[statesMax][eventsMax])
+
+/**
+ * @brief Transition Active Object to the next state
+ *
+ * @param self Pointer to the Active Object
+ * @param nextState Next state to transition to
+ * 
+ * @return whether transition succeed
+ *
+ * #### Example:
+ * @code
+ * // Transition to a new state:
+ * MY_STATE newState = ...;
+ * MY_ACTIVE_OBJECT_FSM_BasicTransitionToNextState(&myObject, newState);
+ * @endcode
+ */
+bool ACTIVE_OBJECT_T##_FSM_BasicTransitionToNextState(ACTIVE_OBJECT_T *const activeObject, STATE_T nextState);
 
 #endif
 

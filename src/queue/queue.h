@@ -7,7 +7,7 @@
  * It utilizes a fixed-size array and employs the concept of wrapping around the indices to achieve a circular behavior.
  * The circular nature allows efficient utilization of space without wasting memory.
  *
- *  * ###Example:
+ * ### Example:
  * @code
  * #include "queue.h"
  * #include "queue_impl.h"
@@ -40,7 +40,7 @@
  * @tparam T The data type of the elements in the queue.
  * @tparam maxQueueCapacity max queue capacity (size), should always be a power of 2, not more than 128 (int8)
  *
- * ####Example:
+ * ### Example:
  * @code
  * // Declare a queue for integers with a maximum capacity of 10
  * DECLARE_QUEUE(int, 10);
@@ -76,7 +76,7 @@
  *
  * @param q Pointer to the queue to be initialized.
  *
- * ####Example:
+ * #### Example:
  * @code
  * QUEUE_int q;
  * QUEUE_int_Ctor(&q);
@@ -92,7 +92,7 @@ void QUEUE_T_Ctor(QUEUE_T *const q);
  *
  * @return `true` if element enqueued (queue wasn't full), `false` otherwise.
  *
- * ####Example:
+ * ### Example:
  * @code
  * QUEUE_int q;
  * QUEUE_int_Ctor(&q);
@@ -107,7 +107,7 @@ bool QUEUE_T_Enqueue(QUEUE_T *const q, T item);
  * @param q Pointer to the queue.
  * @return The dequeued item or NULL
  *
- * ####Example:
+ * ### Example:
  * @code
  * QUEUE_int q;
  * QUEUE_int_Ctor(&q);
@@ -123,7 +123,7 @@ T QUEUE_T_Dequeue(QUEUE_T *const q);
  * @param q Pointer to the queue.
  * @return The current size of the queue.
  *
- * ####Example:
+ * ### Example:
  * @code
  * QUEUE_int q;
  * QUEUE_int_Ctor(&q);
@@ -139,7 +139,7 @@ int QUEUE_T_GetSize(QUEUE_T *const q);
  * @param q Pointer to the queue.
  * @return The element at the front of the queue or NULL
  *
- * ####Example:
+ * #### Example:
  * @code
  * QUEUE_int q;
  * QUEUE_int_Ctor(&q);
@@ -155,7 +155,7 @@ T QUEUE_T_Peek(QUEUE_T *const q)
  * @param q Pointer to the queue.
  * @return `true` if the queue is full, `false` otherwise.
  *
- * ####Example:
+ * ### Example:
  * @code
  * QUEUE_int q;
  * QUEUE_int_Ctor(&q);

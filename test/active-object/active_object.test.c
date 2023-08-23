@@ -62,41 +62,39 @@ void test_dispatchAndProcessQueue(void) {
 
     // Dispatch TEST_EVENT_A and process it
     TestActiveObject_Dispatch(&obj, TEST_EVENT_A);
-    TestActiveObject_ProcessQueue(&obj, handleEvent, transitionToState, handleEmptyQueue);
+    TestActiveObject_ProcessQueue(&obj, handleEvent, transitionToState);
 
     TEST_ASSERT_EQUAL(TEST_STATE_RUNNING, obj.state);
 
     // Dispatch TEST_EVENT_B and process it
     TestActiveObject_Dispatch(&obj, TEST_EVENT_B);
-    TestActiveObject_ProcessQueue(&obj, handleEvent, transitionToState, handleEmptyQueue);
+    TestActiveObject_ProcessQueue(&obj, handleEvent, transitionToState);
 
     TEST_ASSERT_EQUAL(TEST_STATE_PAUSED, obj.state);
 }
 
-void test_basicTransitionToNextState(void) {
+void test_hasEmptyQueue(void) {
     TestActiveObject obj;
     TestFields fields = { .value = 10 };
     TestActiveObject_Ctor(&obj, 1, TEST_STATE_IDLE, fields);
 
-    // Assert initial state
-    TEST_ASSERT_EQUAL(TEST_STATE_IDLE, obj.state);
+    // Initially the queue should be empty
+    TEST_ASSERT_TRUE(TestActiveObject_HasEmptyQueue(&obj));
 
-    // Test transitioning to TEST_STATE_RUNNING
-    bool transitioned = TestActiveObject_basicTransitionToNextState(&obj, TEST_STATE_RUNNING);
-    TEST_ASSERT_TRUE(transitioned);
-    TEST_ASSERT_EQUAL(TEST_STATE_RUNNING, obj.state);
+    // Add an item to the queue and check again
+    TestActiveObject_Dispatch(&obj, TEST_EVENT_A);
+    TEST_ASSERT_FALSE(TestActiveObject_HasEmptyQueue(&obj));
 
-    // Test transitioning to TEST_STATE_PAUSED
-    transitioned = TestActiveObject_basicTransitionToNextState(&obj, TEST_STATE_PAUSED);
-    TEST_ASSERT_TRUE(transitioned);
-    TEST_ASSERT_EQUAL(TEST_STATE_PAUSED, obj.state);
+    // Process the queue, it should become empty again
+    TestActiveObject_ProcessQueue(&obj, handleEvent, transitionToState);
+    TEST_ASSERT_TRUE(TestActiveObject_HasEmptyQueue(&obj));
 }
 
 int main(void) {
     UNITY_BEGIN();
     RUN_TEST(test_constructor);
     RUN_TEST(test_dispatchAndProcessQueue);
-    RUN_TEST(test_basicTransitionToNextState);
+    RUN_TEST(test_hasEmptyQueue);
     UNITY_END();
 
     return 0;

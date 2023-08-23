@@ -19,21 +19,19 @@
         QUEUE_##EVENT_T##_Enqueue(&self->queue, event); \
     }                                                                                               \
                                                                                                     \
-    /* TODO add non basic transition, handle start, traverse, exit state functions */ \
+
     \
-    bool ACTIVE_OBJECT_T##_basicTransitionToNextState(ACTIVE_OBJECT_T *const self, STATE_T nextState) { \
-        self->state = nextState; \
-        return true; \
-    } \
+    bool ACTIVE_OBJECT_T##_HasEmptyQueue(ACTIVE_OBJECT_T *const self) {\
+        return EMPTY_QUEUE == QUEUE_##EVENT_T##_GetSize(&self->queue); \
+    }\
     \
     void ACTIVE_OBJECT_T##_ProcessQueue(                                                            \
             ACTIVE_OBJECT_T *const self,                                \
             EVENT_T##_HANDLER_F eventHandlerCb,                                                             \
-            STATE_T##_TRANSITION_F transitionToNextStateCb,                                                 \
-            ACTIVE_OBJECT_T##HAS_EMPTY_QUEUE_F hasEmptyQueueCb) { \
-        bool isEmptyQueue = EMPTY_QUEUE == QUEUE_##EVENT_T##_GetSize(&self->queue); \
-        /* TODO implement check for hasEmptyQueueCb existance */ \
-        if (isEmptyQueue) return hasEmptyQueueCb(self); \
+            STATE_T##_TRANSITION_F transitionToNextStateCb) { \
+        /* TODO debug log it, just double check to no dequeue empty queue */ \
+        if (ACTIVE_OBJECT_T##_HasEmptyQueue(self)) return; \
+        \
         EVENT_T e = QUEUE_##EVENT_T##_Dequeue(&self->queue); \
         STATE_T nextState = eventHandlerCb(self, e); \
         transitionToNextStateCb(self, nextState); \
