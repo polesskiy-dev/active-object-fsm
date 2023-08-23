@@ -41,14 +41,14 @@ STATE_T##_HANDLE_FUNCTIONS stateHandleFunctionsList[statesMax]\\
 #define DECLARE_FSM(ACTIVE_OBJECT_T, EVENT_T, STATE_T, eventsMax, statesMax) \
 /* State handler function type */  \
 typedef STATE_T (*EVENT_T##_HANDLE_F)(ACTIVE_OBJECT_T *const activeObject, EVENT_T event); \
-typedef bool (*EVENT_T##_GUARD_F)(ACTIVE_OBJECT_T *const activeObject, EVENT_T event);     \
-typedef void (*STATE_T##_HANDLE_F)(ACTIVE_OBJECT_T *const activeObject, EVENT_T event);    \
+typedef bool    (*EVENT_T##_GUARD_F)(ACTIVE_OBJECT_T *const activeObject, EVENT_T event);  \
+typedef bool    (*STATE_T##_HOOK_F)(ACTIVE_OBJECT_T *const activeObject, void *const ctx);    \
                                                                              \
 typedef struct {                                                              \
-    STATE_T##_HANDLE_F  enter;  \
-    STATE_T##_HANDLE_F  traverse;    \
-    STATE_T##_HANDLE_F  exit;   \
-} STATE_T##_HANDLE_FUNCTIONS;                                                \
+    STATE_T##_HOOK_F  enter;  \
+    STATE_T##_HOOK_F  traverse;    \
+    STATE_T##_HOOK_F  exit;   \
+} STATE_T##_HOOKS;                                                \
 \
 STATE_T ACTIVE_OBJECT_T##_FSM_ProcessEventToNextState(\
         ACTIVE_OBJECT_T *const activeObject, \
@@ -57,6 +57,7 @@ STATE_T ACTIVE_OBJECT_T##_FSM_ProcessEventToNextState(\
         STATE_T##_HANDLE_FUNCTIONS stateHandlersList[statesMax]                 \
     );\
 bool ACTIVE_OBJECT_T##_FSM_BasicTransitionToNextState(ACTIVE_OBJECT_T *const activeObject, STATE_T nextState);\
+bool ACTIVE_OBJECT_T##_HooksTransitionToNextState(ACTIVE_OBJECT_T *const activeObject, STATE_T nextState, void *const ctx, STATE_T##_HOOKS statesHooksList[statesMax]);
 
 /**
  * @def DECLARE_GUARD(ACTIVE_OBJECT_T, EVENT_T, CONDITION_FUNCTION, ON_TRUE_FUNCTION, ON_FALSE_FUNCTION)
@@ -69,7 +70,7 @@ bool ACTIVE_OBJECT_T##_FSM_BasicTransitionToNextState(ACTIVE_OBJECT_T *const act
  * @tparam ON_TRUE_FUNCTION The function to be called if the guard condition evaluates to true.
  * @tparam ON_FALSE_FUNCTION The function to be called if the guard condition evaluates to false.
  * 
- * #### Example:
+ * ### Example:
  * @code
  * // TODO
  * @endcode
@@ -86,7 +87,7 @@ bool ACTIVE_OBJECT_T##_FSM_BasicTransitionToNextState(ACTIVE_OBJECT_T *const act
  * @brief Convenience macro to represent a specific guard function.
  * @details This macro simplifies the invocation of the declared guard function based on the provided CONDITION_FUNCTION, ON_TRUE_FUNCTION, and ON_FALSE_FUNCTION.
  * 
- * #### Example:
+ * ### Example:
  * @code
  * // TODO
  * @endcode
@@ -99,7 +100,7 @@ bool ACTIVE_OBJECT_T##_FSM_BasicTransitionToNextState(ACTIVE_OBJECT_T *const act
 /**
  * @brief Invoke state handler f from transitions table by current state and event: [state][event] => f(event)
  *
- * @param self[in,out] - active object object
+ * @param activeObject[in,out] - active object object
  * @param event[in] - new event
  * @param transitionTable[in] - event handlers functions 2D array
  * @param stateHandleFunctionsList[in] - state handle functions array
@@ -108,21 +109,62 @@ bool ACTIVE_OBJECT_T##_FSM_BasicTransitionToNextState(ACTIVE_OBJECT_T *const act
 STATE_T ACTIVE_OBJECT_T_FSM_ProcessEventToNextState(ACTIVE_OBJECT_T *const activeObject, EVENT_T event, EVENT_T_HANDLE_F transitionTable[statesMax][eventsMax])
 
 /**
- * @brief Transition Active Object to the next state
+ * @brief Active Object state transition
  *
- * @param self Pointer to the Active Object
+ * @param activeObject Pointer to the Active Object
  * @param nextState Next state to transition to
  * 
  * @return whether transition succeed
  *
- * #### Example:
- * @code
- * // Transition to a new state:
- * MY_STATE newState = ...;
- * MY_ACTIVE_OBJECT_FSM_BasicTransitionToNextState(&myObject, newState);
+ * ### Example:
+ * @code{.c}
+ * MyActiveObjectType myActiveObject;
+ * MyStateType nextState = SOME_STATE;
+ * 
+ * bool result = MyActiveObjectType##_BasicTransitionToNextState(&myActiveObject, nextState);
+ * if (result) {
+ *     printf("Transition successful!\n");
+ * } else {
+ *     printf("Transition failed!\n");
+ * }
  * @endcode
  */
-bool ACTIVE_OBJECT_T##_FSM_BasicTransitionToNextState(ACTIVE_OBJECT_T *const activeObject, STATE_T nextState);
+bool ACTIVE_OBJECT_T_FSM_BasicTransitionToNextState(ACTIVE_OBJECT_T *const activeObject, STATE_T nextState);
+
+/**
+ * @brief Performs a state transition with hooks.
+ *
+ * This function performs a transition to the given next state, and calls the appropriate hooks
+ * based on the transition type (entry, exit, or self-transition).
+ *
+ * @param activeObject Pointer to the active object.
+ * @param nextState The state to transition to.
+ * @param ctx Context pointer that could be passed to hooks.
+ * @param statesHooksList List of hooks for each state.
+ * 
+ * @return True if all hooks executed successfully, false otherwise.
+ * 
+ * ### Example:
+ * @code{.c}
+ * MyActiveObjectType myActiveObject;
+ * MyStateType nextState = SOME_STATE;
+ * void *context = NULL; // Replace with actual context if needed
+ * MyStateType_HOOKS statesHooksList[MAX_STATES];
+ *
+ * // Initialize statesHooksList
+ * statesHooksList[SOME_STATE].enter = MyEnterHookFunction;
+ * statesHooksList[SOME_STATE].exit = MyExitHookFunction;
+ * statesHooksList[SOME_STATE].traverse = MyTraverseHookFunction;
+ * 
+ * bool result = MyActiveObjectType_HooksTransitionToNextState(&myActiveObject, nextState, context, statesHooksList);
+ * if (result) {
+ *     printf("Transition with hooks successful!\n");
+ * } else {
+ *     printf("Transition with hooks failed!\n");
+ * }
+ * @endcode
+ */
+bool ACTIVE_OBJECT_T_HooksTransitionToNextState(ACTIVE_OBJECT_T *const activeObject, STATE_T nextState, void *const ctx, STATE_T##_HOOKS statesHooksList[statesMax]);
 
 #endif
 

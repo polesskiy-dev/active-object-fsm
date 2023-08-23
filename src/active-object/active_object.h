@@ -65,13 +65,11 @@
     } ACTIVE_OBJECT_T; \
     \
     typedef STATE_T (*EVENT_T##_HANDLER_F)(ACTIVE_OBJECT_T *const self, EVENT_T event); \
-    typedef void (*ACTIVE_OBJECT_T##HAS_EMPTY_QUEUE_F)(ACTIVE_OBJECT_T *const self); \
-    typedef bool (*STATE_T##_TRANSITION_F)(ACTIVE_OBJECT_T *const self, STATE_T state); \
+    typedef bool (*STATE_T##_TRANSITION_F)(ACTIVE_OBJECT_T *const self, STATE_T state, void* ctx); \
     \
     void ACTIVE_OBJECT_T##_Ctor(ACTIVE_OBJECT_T *const self, uint8_t id, STATE_T initialState, FIELDS_T fields); \
     void ACTIVE_OBJECT_T##_Dispatch(ACTIVE_OBJECT_T *const self, EVENT_T event); \
     bool ACTIVE_OBJECT_T##_HasEmptyQueue(ACTIVE_OBJECT_T *const self); \
-    bool ACTIVE_OBJECT_T##_basicTransitionToNextState(ACTIVE_OBJECT_T *const self, STATE_T nextState); \
     void ACTIVE_OBJECT_T##_ProcessQueue(ACTIVE_OBJECT_T *const self, EVENT_T##_HANDLER_F eventHandlerCb, STATE_T##_TRANSITION_F transitionToNextStateCb);
 
 /**
@@ -116,7 +114,7 @@ void ACTIVE_OBJECT_T_Ctor(ACTIVE_OBJECT_T *const self, uint8_t id, STATE_T initi
  * MY_ACTIVE_OBJECT_Dispatch(&myObject, myEvent);
  * @endcode
 */
-void ACTIVE_OBJECT_T##_Dispatch(ACTIVE_OBJECT_T *const self, EVENT_T event);
+void ACTIVE_OBJECT_T_Dispatch(ACTIVE_OBJECT_T *const self, EVENT_T event);
 
 /**
  * @brief Check Active Object queue empty 
@@ -125,7 +123,7 @@ void ACTIVE_OBJECT_T##_Dispatch(ACTIVE_OBJECT_T *const self, EVENT_T event);
  * 
  * @return is queue empty
  */
-bool ACTIVE_OBJECT_T##_HasEmptyQueue(ACTIVE_OBJECT_T *const self);
+bool ACTIVE_OBJECT_T_HasEmptyQueue(ACTIVE_OBJECT_T *const self);
 
 /**
  * @brief Process the event queue of the Active Object
@@ -140,7 +138,7 @@ bool ACTIVE_OBJECT_T##_HasEmptyQueue(ACTIVE_OBJECT_T *const self);
  * if (!MY_ACTIVE_OBJECT_HasEmptyQueue(&myObject)) MY_ACTIVE_OBJECT_ProcessQueue(&myObject, myEventHandler, myTransitionCb); \
  * @endcode
  */
-void ACTIVE_OBJECT_T_ProcessQueue(ACTIVE_OBJECT_T *const self, EVENT_T##_HANDLER_F eventHandlerCb, STATE_T_TRANSITION_F transitionToNextStateCb)
+void ACTIVE_OBJECT_T_ProcessQueue(ACTIVE_OBJECT_T *const self, EVENT_T##_HANDLER_F eventHandlerCb, STATE_T##_TRANSITION_F transitionToNextStateCb)
 
 #endif
 

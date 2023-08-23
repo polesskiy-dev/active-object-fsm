@@ -18,23 +18,22 @@
         if (QUEUE_##EVENT_T##_IsFull(&self->queue)) return; /* TODO Handle error, e.g., logging */ \
         QUEUE_##EVENT_T##_Enqueue(&self->queue, event); \
     }                                                                                               \
-                                                                                                    \
-
     \
     bool ACTIVE_OBJECT_T##_HasEmptyQueue(ACTIVE_OBJECT_T *const self) {\
         return EMPTY_QUEUE == QUEUE_##EVENT_T##_GetSize(&self->queue); \
     }\
     \
-    void ACTIVE_OBJECT_T##_ProcessQueue(                                                            \
-            ACTIVE_OBJECT_T *const self,                                \
-            EVENT_T##_HANDLER_F eventHandlerCb,                                                             \
+    void ACTIVE_OBJECT_T##_ProcessQueue(\
+            ACTIVE_OBJECT_T *const self, \
+            EVENT_T##_HANDLER_F eventHandlerCb,\
             STATE_T##_TRANSITION_F transitionToNextStateCb) { \
         /* TODO debug log it, just double check to no dequeue empty queue */ \
         if (ACTIVE_OBJECT_T##_HasEmptyQueue(self)) return; \
         \
         EVENT_T e = QUEUE_##EVENT_T##_Dequeue(&self->queue); \
         STATE_T nextState = eventHandlerCb(self, e); \
-        transitionToNextStateCb(self, nextState); \
+        void* ctx = e->payload ? e->payload : NULL; \
+        transitionToNextStateCb(self, nextState, ctx); \
     }
 
 #endif //ACTIVE_OBJECT_IMPL_H
