@@ -4,6 +4,7 @@
 #include "./active_object.h"
 #include "../queue/queue_impl.h"
 
+//Generate Unit tests for this macro on Unity framework
 #define ACTIVE_OBJECT_IMPLEMENTATION(ACTIVE_OBJECT_T, EVENT_T, STATE_T, FIELDS_T, maxQueueCapacity) \
     QUEUE_IMPLEMENTATION(EVENT_T, maxQueueCapacity); \
     \
@@ -32,8 +33,8 @@
         \
         EVENT_T e = QUEUE_##EVENT_T##_Dequeue(&self->queue); \
         STATE_T nextState = eventHandlerCb(self, e); \
-        void* ctx = e->payload ? e->payload : NULL; \
-        transitionToNextStateCb(self, nextState, ctx); \
+        /* TODO implement passing ctx from event */\
+        transitionToNextStateCb(self, nextState, NULL); \
     }
 
 #endif //ACTIVE_OBJECT_IMPL_H
