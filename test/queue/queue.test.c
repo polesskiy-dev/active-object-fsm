@@ -1,80 +1,84 @@
+#define QUEUE_MAX_CAPACITY  (16)
+
 #include "../../libraries/Unity/src/unity.h"
-#include "../../src/queue/queue.h"
-#include "../../src/queue/queue_impl.h"
+#include "../../src/event_queue/event_queue.h"
 
-// We're using a queue of integers for simplicity
-#define QUEUE_SIZE 4
-DECLARE_QUEUE(int, QUEUE_SIZE)
-QUEUE_IMPLEMENTATION(int, QUEUE_SIZE)
+typedef enum {
+    TEST_SIG_1 = 1,
+    TEST_SIG_2 = 2,
+    TEST_SIG_3 = 3,
+} TEST_SIG;
 
-QUEUE_int q;
+typedef struct {
+    TEST_SIG sig;
+    void* payload;
+    size_t size;
+} TTestEvent;
+
+TTestEvent events[QUEUE_MAX_CAPACITY];
+TEventQueue queue;
 
 void setUp(void) {
-    // This is run before EACH test
-    QUEUE_int_Ctor(&q); // constructor, BEWARE: it's not emptying actual elements
+    EventQueue_Initialize(&queue, (TEvent*)&events, QUEUE_MAX_CAPACITY);
 }
 
 void tearDown(void) {
-    // This is run after EACH test
+    // Nothing to tear down in this case
 }
 
-void test_queue_ctor(void) {
-    TEST_ASSERT_EQUAL_INT(-1, q.front);
-    TEST_ASSERT_EQUAL_INT(-1, q.rear);
-    TEST_ASSERT_EQUAL_INT(0, QUEUE_int_GetSize(&q));
+void test_EventQueue_Initialize(void) {
+    TEST_ASSERT_EQUAL_INT(-1, queue.front);
+    TEST_ASSERT_EQUAL_INT(-1, queue.rear);
 }
 
-void test_queue_enqueue(void) {
-    for (int i = 0; i < QUEUE_SIZE - 1; i++) {
-        QUEUE_int_Enqueue(&q, i);
-        TEST_ASSERT_EQUAL_INT(i+1, QUEUE_int_GetSize(&q));
+void test_EventQueue_Enqueue(void) {
+    TEvent event = {TEST_SIG_1, NULL, 0};
+    bool enqueueResult = EventQueue_Enqueue(&queue, event);
+
+    TEST_ASSERT_TRUE(enqueueResult);
+    TEST_ASSERT_FALSE(EventQueue_IsEmpty(&queue));
+}
+
+void test_EventQueue_Dequeue(void) {
+    TEvent event = {TEST_SIG_1, NULL, 0};
+    EventQueue_Enqueue(&queue, event);
+
+    TEvent dequeuedEvent = EventQueue_Dequeue(&queue);
+
+    TEST_ASSERT_EQUAL_INT(1, dequeuedEvent.sig);
+    TEST_ASSERT_TRUE(EventQueue_IsEmpty(&queue));
+}
+
+void test_EventQueue_Peek(void) {
+    TEvent event = {TEST_SIG_1, NULL, 0};
+    EventQueue_Enqueue(&queue, event);
+
+    TEvent peekedEvent = EventQueue_Peek(&queue);
+
+    TEST_ASSERT_EQUAL_INT(TEST_SIG_1, peekedEvent.sig);
+}
+
+void test_EventQueue_IsEmpty(void) {
+    TEST_ASSERT_TRUE(EventQueue_IsEmpty(&queue));
+}
+
+void test_EventQueue_IsFull(void) {
+    for (int i = 0; i < QUEUE_MAX_CAPACITY; ++i) {
+        TEvent event = {i, NULL, 0};
+        bool enqueueResult = EventQueue_Enqueue(&queue, event);
+        TEST_ASSERT_TRUE(enqueueResult);
     }
-}
 
-void test_queue_dequeue(void) {
-    for (int i = 0; i < QUEUE_SIZE - 1; i++) {
-        QUEUE_int_Enqueue(&q, i);
-    }
-    TEST_ASSERT_EQUAL_INT(0, QUEUE_int_Dequeue(&q));
-    TEST_ASSERT_EQUAL_INT(QUEUE_SIZE-2, QUEUE_int_GetSize(&q));
-}
-
-void test_queue_isfull(void) {
-    for (int i = 0; i < QUEUE_SIZE - 1; i++) {
-        QUEUE_int_Enqueue(&q, i);
-    }
-    TEST_ASSERT_FALSE(QUEUE_int_IsFull(&q));
-    QUEUE_int_Enqueue(&q, 99);
-    TEST_ASSERT_TRUE(QUEUE_int_IsFull(&q));
-}
-
-void test_queue_dequeue_empty(void) {
-    TEST_ASSERT_EQUAL_INT(0, QUEUE_int_Dequeue(&q));
-    TEST_ASSERT_EQUAL_INT(0, QUEUE_int_GetSize(&q));
-}
-
-void test_queue_peek_empty(void) {
-    TEST_ASSERT_EQUAL_INT(0, QUEUE_int_Peek(&q));
-    TEST_ASSERT_EQUAL_INT(0, QUEUE_int_GetSize(&q));
-}
-
-void test_queue_enqueue_full(void) {
-    for (int i = 0; i < QUEUE_SIZE; i++) {
-        TEST_ASSERT_TRUE(QUEUE_int_Enqueue(&q, i));
-    }
-    TEST_ASSERT_FALSE(QUEUE_int_Enqueue(&q, 99));
-    TEST_ASSERT_EQUAL_INT(QUEUE_SIZE, QUEUE_int_GetSize(&q));
+    TEST_ASSERT_TRUE(EventQueue_IsFull(&queue));
 }
 
 int main(void) {
     UNITY_BEGIN();
-    RUN_TEST(test_queue_ctor);
-    RUN_TEST(test_queue_enqueue);
-    RUN_TEST(test_queue_dequeue);
-    RUN_TEST(test_queue_isfull);
-    RUN_TEST(test_queue_dequeue_empty);
-    RUN_TEST(test_queue_peek_empty);
-    RUN_TEST(test_queue_enqueue_full);
-
+    RUN_TEST(test_EventQueue_Initialize);
+    RUN_TEST(test_EventQueue_Enqueue);
+    RUN_TEST(test_EventQueue_Dequeue);
+    RUN_TEST(test_EventQueue_Peek);
+    RUN_TEST(test_EventQueue_IsEmpty);
+    RUN_TEST(test_EventQueue_IsFull);
     return UNITY_END();
 }
