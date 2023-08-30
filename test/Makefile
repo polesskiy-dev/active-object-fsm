@@ -1,5 +1,5 @@
 # Compiler
-CC = gcc
+CC = gcc -std=c99 #-Wall -Wextra -Werror -pedantic -g
 
 # Directories
 SRC_DIR = ../src
