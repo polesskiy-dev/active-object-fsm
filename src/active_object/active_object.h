@@ -54,13 +54,15 @@
 /** @brief Macro to create invalid state indication */
 #define INVALID_STATE ((TState){.name = -1})
 
+typedef struct TActiveObject TActiveObject;
+
 /** @brief Function pointer type for state hooks.
  *
  *  @param activeObject Pointer to the active object.
  *  @param ctx Context pointer.
  *  @return A boolean value to indicate hook success or failure result.
  */
-typedef bool (*TStateHook)(void *const activeObject, void *const ctx);
+typedef bool (*TStateHook)(TActiveObject *const activeObject, void *const ctx);
 
 /** @brief Struct representing a single state of an active object. */
 typedef struct {
@@ -71,11 +73,11 @@ typedef struct {
 } TState;
 
 /** @brief Struct representing an active object. */
-typedef struct {
+struct TActiveObject {
     uint8_t id;
     const TState *state;
     TEventQueue queue;
-} TActiveObject;
+};
 
 /** @brief Initialize an active object.
  *  @note The events array must be allocated by the user.
