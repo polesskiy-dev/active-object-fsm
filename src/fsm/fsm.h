@@ -58,10 +58,10 @@ bool FSM_TraverseNextState(
     const TState *const nextState);    
 
 /** @brief Checks if two states are equal based on their name. */
-inline bool FSM_IsEqualStates(const TState *const stateA, const TState *const stateB) __attribute__((always_inline));
+bool FSM_IsEqualStates(const TState *const stateA, const TState *const stateB);
 
 /** @brief Checks if a state is valid (i.e., not an empty or invalid state). */
-inline bool FSM_IsValidState(const TState *const state) __attribute__((always_inline));
+bool FSM_IsValidState(const TState *const state);
 
 #define DECLARE_GUARD(CONDITION_FUNCTION, ON_TRUE_FUNCTION) \
     const TState* GUARD_##CONDITION_FUNCTION##_##ON_TRUE_FUNCTION(TActiveObject *const activeObject, TEvent event) { \
