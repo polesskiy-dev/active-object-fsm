@@ -3,44 +3,31 @@
 ![GitHub release (with filter)](https://img.shields.io/github/v/release/polesskiy-dev/active-object-fsm)
 
 # active-object-fsm
-Minimalistic implementation of Active Object pattern + FSM for embedded systems.
+Minimalistic implementation of Active Object pattern + FSM for embedded systems. Static memory allocation only.
+
+## Features
+- [x] Active Object pattern (Actors) [wiki Actors](https://en.wikipedia.org/wiki/Actor_model)
+- [x] Finite State Machine (Moore+Mealy) [wiki FSM](https://en.wikipedia.org/wiki/Finite-state_machine)
+- [x] Transition table 
+- [x] State entry/transition/exit actions
+- [ ] 100% Code coverage
+
+## Documentation
+
+[Doxygen docs](https://polesskiy-dev.github.io/active-object-fsm/)
 
 ## Initialization
 
 	$ git submodule init && git submodule update --remote
 	$ make # compile to bin/
 
-## Documentation
-
-[Doxygen docs](https://polesskiy-dev.github.io/active-object-fsm/)
-
 ## Examples
 
-[Blinky: simple LED on/off demo](./examples/simple-blinky-fsm/README.md)
+[TODO: Blinky: simple LED on/off demo](./examples/simple-blinky-fsm/README.md)
 
-[Request: retry/timeout, transition table demo](./examples/request-fsm/README.md)
+[TODO: Request: retry/timeout, transition table demo](./examples/request-fsm/README.md)
 
-[Request: retry after delay + rety/timeout, transition table demo](./examples/request-retry-fsm/README.md)
-
-## Advantages
-
-Preprocessor templates allow strict typings and debugger suggestions, all types and enums have human-readable names, e.g. from [Request demo](./examples/request-fsm/README.md):
-
-![types](https://raw.githubusercontent.com/polesskiy-dev/active-object-fsm/main/docs/active-object-typings.png)
-
-TODO: make naming conventions e.g.:
-
-- types
-    - CAPITAL_CASE_T for template types
-    - CAPITAL_CASE for enums
-    - CAPITAL_CASE for typedefs (???)
-    - CAPITAL_CASE for #define
-- functions
-    - MODULE_PascalCase for module public functions
-    - camelCase for module private functions
-- variables
-    - MODULE_camelCase for module global variables
-    - camelCase for local variables
+[TODO: Request: retry after delay + rety/timeout, transition table demo](./examples/request-retry-fsm/README.md)
 
 ## Side notes
 
@@ -68,7 +55,6 @@ $ for file in ./**/*.gv; do dot -Tsvg "$file" > "${file%.gv}.svg"; done # dot -T
 ```
 
 ### TODO: Code coverage
-It seems that it's hard to check coverage on macros.
 
 Based on [Codecov](https://about.codecov.io/):
 
