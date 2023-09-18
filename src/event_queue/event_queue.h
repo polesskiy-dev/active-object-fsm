@@ -23,7 +23,6 @@
 #include <stdbool.h>
 #include <stddef.h>
 
-
 /**
  * @brief Event structure containing a signal and payload
  */

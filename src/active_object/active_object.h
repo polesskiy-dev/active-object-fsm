@@ -16,7 +16,7 @@
  * ### Example:
  * @code
  * // Active Object inheritance
- * typedef enum { NO_STATE, STATE_1 = 1, STATES_MAX } TEST_STATE; // state names
+ * typedef enum { INVALID_STATE = -1, NO_STATE, STATE_1 = 1, STATES_MAX } TEST_STATE; // state names
  * typedef enum { NO_SIG, EVENT_SIG_1 = 1, EVENTS_MAX } TEST_EVENT_SIG; // event signals names
  * TEvent events[QUEUE_MAX_SIZE]; // events list for the queue
  * 
@@ -66,17 +66,17 @@ typedef bool (*TStateHook)(TActiveObject *const activeObject, void *const ctx);
 
 /** @brief Struct representing a single state of an active object. */
 typedef struct {
-    int32_t name;
-    TStateHook onEnter;
-    TStateHook onTraverse;
-    TStateHook onExit;
+    int name; /**< State name. */
+    TStateHook onEnter; /**< State onEnter hook. If the next state is the same as the current state, this hook won't be called. */
+    TStateHook onTraverse; /**< State onTraverse hook. If next state is the same as current state, this hook will be called. */
+    TStateHook onExit; /**< State onExit hook. If the next state is the same as the current state, this hook won't be called. */
 } TState;
 
 /** @brief Struct representing an active object. */
 struct TActiveObject {
-    uint8_t id;
-    const TState *state;
-    TEventQueue queue;
+    uint8_t id; /**< Object ID. */
+    const TState *state; /**< Pointer to the current state. */
+    TEventQueue queue; /**< Event queue. */
 };
 
 /** @brief Initialize an active object.

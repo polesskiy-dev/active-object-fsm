@@ -33,12 +33,12 @@ typedef const TState* (*TEventHandler)(TActiveObject *const activeObject, TEvent
  * @returns -1 (INVALID_STATE) in case of invalid input args
  */
 const TState *FSM_ProcessEventToNextState(
-    TActiveObject *const activeObject,
-    TEvent event,
-    uint32_t statesMax,
-    uint32_t eventsMax,
-    const TState statesList[statesMax],
-    const TEventHandler transitionTable[statesMax][eventsMax]);
+    TActiveObject *const activeObject, /**< The active object. */
+    TEvent event, /**< The incoming event. */
+    uint32_t statesMax, /**< The maximum number of states. */
+    uint32_t eventsMax, /**< The maximum number of events. */
+    const TState statesList[statesMax], /**< The list of states. */
+    const TEventHandler transitionTable[statesMax][eventsMax]); /**< The transition table for state-event. */
 
 /**
  * @brief Transitions the active object to the next state 
@@ -48,8 +48,6 @@ const TState *FSM_ProcessEventToNextState(
  *
  * @param[in,out] activeObject The active object.
  * @param[in] nextState The next state to transition to.
- * @param[in] statesMax The maximum number of states.
- * @param[in] statesList The list of states.
  *
  * @return True if the transition is successful, false otherwise.
  */
@@ -63,12 +61,28 @@ bool FSM_IsEqualStates(const TState *const stateA, const TState *const stateB);
 /** @brief Checks if a state is valid (i.e., not an empty or invalid state). */
 bool FSM_IsValidState(const TState *const state);
 
-#define DECLARE_GUARD(CONDITION_FUNCTION, ON_TRUE_FUNCTION) \
-    const TState* GUARD_##CONDITION_FUNCTION##_##ON_TRUE_FUNCTION(TActiveObject *const activeObject, TEvent event) { \
-        if (CONDITION_FUNCTION(activeObject, event)) return ON_TRUE_FUNCTION(activeObject, event); \
+/**
+ * @brief Guard function declaration macro
+ * @note should be invoked before using appropriate GUARD macro in transition table
+ * @details Creates a guard function for a given condition function and two event handler functions.
+ * For true condition result the first event handler function will be called, for false - the second one.
+ *
+ * ### Example
+ * @code
+ * TODO make an example
+ * @endcode
+ */
+#define DECLARE_GUARD(CONDITION_FUNCTION, ON_TRUE_FUNCTION, ON_FALSE_FUNCTION) \
+    const TState* GUARD_##CONDITION_FUNCTION##_##ON_TRUE_FUNCTION##_##ON_FALSE_FUNCTION(TActiveObject *const activeObject, TEvent event) { \
+        if (CONDITION_FUNCTION(activeObject, event)) return ON_TRUE_FUNCTION(activeObject, event);  \
+        return ON_FALSE_FUNCTION(activeObject, event);  \
         return (const TState*)NULL;   \
     };
 
-#define GUARD(CONDITION_FUNCTION, ON_TRUE_FUNCTION) (GUARD_##CONDITION_FUNCTION##_##ON_TRUE_FUNCTION)    
+/**
+ * @brief Guard function macro
+ * @note DECLARE_GUARD should be invoked before using appropriate GUARD macro in transition table
+ */
+#define GUARD(CONDITION_FUNCTION, ON_TRUE_FUNCTION, ON_FALSE_FUNCTION) GUARD_##CONDITION_FUNCTION##_##ON_TRUE_FUNCTION##_##ON_FALSE_FUNCTION
 
 #endif //FSM_H

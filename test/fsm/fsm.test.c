@@ -8,8 +8,8 @@
 typedef enum { NO_STATE, EMPTY_HOOKS_ST, SUCCESS_HOOKS_ST, FAILURE_HOOKS_ST, STATES_MAX } STATES_NAMES; // state names
 typedef enum { NO_SIG, GO_EMPTY_HOOKS_ST, GO_SUCCESS_HOOKS_ST, GO_FAILURE_HOOKS_ST, EVENTS_MAX } EVENT_SIGS; // events signals names
 
-bool _successHook(void *const activeObject, void *const ctx) { return true; };
-bool _failureHook(void *const activeObject, void *const ctx) { return false; };
+bool _successHook(TActiveObject *const AO, void *const ctx) { return true; };
+bool _failureHook(TActiveObject *const AO, void *const ctx) { return false; };
 
 const TState statesList[STATES_MAX] = { 
     [NO_STATE]          = {.name = NO_STATE},
@@ -24,12 +24,12 @@ const TState* _goToFailureHooksState(TActiveObject *const activeObject, TEvent e
 
 bool _onTrue(TActiveObject *const activeObject, TEvent event) { return true; };
 
-DECLARE_GUARD(_onTrue, _goToFailureHooksState);
+DECLARE_GUARD(_onTrue, _goToFailureHooksState, _goToSuccessHooksState);
 
 const TEventHandler transitionTable[STATES_MAX][EVENTS_MAX] = {
     [NO_STATE]          = { [GO_EMPTY_HOOKS_ST] = _goToEmmptyHooksState },
     [EMPTY_HOOKS_ST]    = { [GO_SUCCESS_HOOKS_ST] = _goToSuccessHooksState },
-    [SUCCESS_HOOKS_ST]  = { [GO_FAILURE_HOOKS_ST] = GUARD(_onTrue, _goToFailureHooksState) },
+    [SUCCESS_HOOKS_ST]  = { [GO_FAILURE_HOOKS_ST] = GUARD(_onTrue, _goToFailureHooksState, _goToSuccessHooksState) },
     [FAILURE_HOOKS_ST]  = { [GO_SUCCESS_HOOKS_ST] = _goToSuccessHooksState },
 };
 
