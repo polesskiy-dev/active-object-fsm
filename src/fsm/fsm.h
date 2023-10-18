@@ -19,29 +19,27 @@ typedef const TState* (*TEventHandler)(TActiveObject *const activeObject, TEvent
 
 /**
  * @brief Processes an incoming event
- * @details Invoke state handler f from transitions table by current state and event: [currState][event] => f(event): nextState
+ * @details Invoke state handler f from transition table by current state and event: [currState][event] => f(event): nextState
  *
  * @param[in] activeObject The active object.
  * @param[in] event The incoming event.
  * @param[in] statesMax The maximum number of states.
  * @param[in] eventsMax The maximum number of events.
- * @param[in] statesList The list of states.
  * @param[in] transitionTable The transition table for state-event pairs.
  *
  * @return A pointer to the next state
  * @returns 0 (EMPTY_STATE) in case of state handler lack in transitionTable
  * @returns -1 (INVALID_STATE) in case of invalid input args
  */
-const TState *FSM_ProcessEventToNextState(
+const TState *FSM_ProcessEventToNextStateFromTransitionTable(
     TActiveObject *const activeObject, /**< The active object. */
     TEvent event, /**< The incoming event. */
     uint32_t statesMax, /**< The maximum number of states. */
     uint32_t eventsMax, /**< The maximum number of events. */
-    const TState statesList[statesMax], /**< The list of states. */
     const TEventHandler transitionTable[statesMax][eventsMax]); /**< The transition table for state-event. */
 
 /**
- * @brief Transitions the active object to the next state 
+ * @brief Transitions the Active Object to the next state
  * @details Invokes state hooks (onEnter, onTraverse, onExit) 
  * of the current and next states appropriately.
  * Returns false on any hook failure (false return).
@@ -51,7 +49,7 @@ const TState *FSM_ProcessEventToNextState(
  *
  * @return True if the transition is successful, false otherwise.
  */
-bool FSM_TraverseNextState(
+bool FSM_TraverseAOToNextState(
     TActiveObject *const activeObject,
     const TState *const nextState);    
 

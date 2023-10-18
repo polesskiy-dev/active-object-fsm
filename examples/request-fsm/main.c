@@ -112,7 +112,7 @@ void runTasks() {
 };
 
 REQUEST_STATE processEventToNextState(REQUEST_AO *const activeObject, REQUEST_EVENT event) {
-    REQUEST_STATE nextState = REQUEST_AO_FSM_ProcessEventToNextState(activeObject, event, requestTransitionTable);
+    REQUEST_STATE nextState = REQUEST_AO_FSM_ProcessEventToNextStateFromTransitionTable(activeObject, event, requestTransitionTable);
 
     return nextState;
 };

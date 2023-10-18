@@ -80,7 +80,7 @@ int main() {
     printf("Pressing UP button, target floor %d\n", 3);
 
     // Use the FSM function
-    myElevator.state = Elevator_FSM_ProcessEventToNextState(&myElevator, event, transitionTable);
+    myElevator.state = Elevator_FSM_ProcessEventToNextStateFromTransitionTable(&myElevator, event, transitionTable);
 
     printf("Elevator state: %s\n", STATES_STRINGS[myElevator.state]);
 

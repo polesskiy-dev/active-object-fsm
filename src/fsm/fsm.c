@@ -12,19 +12,17 @@ inline bool FSM_IsValidState(const TState *const state) {
     return EMPTY_STATE.name != state->name && INVALID_STATE.name != state->name;
 };
 
-const TState *FSM_ProcessEventToNextState(
+const TState *FSM_ProcessEventToNextStateFromTransitionTable(
         TActiveObject *const activeObject,
         TEvent event,
         uint32_t statesMax,
         uint32_t eventsMax,
-        const TState statesList[statesMax],
         const TEventHandler transitionTable[statesMax][eventsMax]) {
 
     /* Validate input args */
 
     // Validate Active object
     if (NULL == activeObject
-        || NULL == statesList
         || NULL == transitionTable)
         return &invalidState; // Handle null pointers as needed
 
@@ -51,14 +49,14 @@ const TState *FSM_ProcessEventToNextState(
 };
 
 // Execute a state hook and return its status.
-bool _executeHook(TStateHook hook, TActiveObject *activeObject) {
+static bool _executeHook(TStateHook hook, TActiveObject *activeObject) {
     if (hook) {
         return hook(activeObject, NULL);
     }
     return true; // No hook to execute, so consider it successful
 }
 
-bool FSM_TraverseNextState(
+bool FSM_TraverseAOToNextState(
         TActiveObject *const activeObject,
         const TState *const nextState) {
     // Null args checks
