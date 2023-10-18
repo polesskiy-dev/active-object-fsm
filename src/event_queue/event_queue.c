@@ -1,7 +1,5 @@
 #include "./event_queue.h"
 
-#include "event_queue.h"
-
 void EventQueue_Initialize(TEventQueue* queue, TEvent* events, uint32_t capacity) {
     queue->events = events;
     queue->capacity = capacity;
