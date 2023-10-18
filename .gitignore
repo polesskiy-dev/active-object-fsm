@@ -24,6 +24,7 @@ html
 # test coverage
 *.gcda
 *.gcno
+*.gcov
 
 # Linker output
 *.ilk

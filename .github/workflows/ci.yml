@@ -32,7 +32,7 @@ jobs:
           force_orphan: true
           publish_branch: gh-pages
 
-  run-tests:
+  run-tests-with-coverage:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -42,4 +42,13 @@ jobs:
       - name: Install dependencies
         run: sudo apt-get install gcc make
       - name: Run tests
-        run: make -C test tests
+        run: make
+      - name: Coverage data
+        run: gcov -bc src/**/*.c
+      - name: List coverage data
+        run: |
+          tree ./
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}

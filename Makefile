@@ -1,10 +1,10 @@
 # Compiler
-CC = gcc -std=c99 #-Wall -Wextra -Werror -pedantic -g
+CC = gcc -std=c99 -fprofile-arcs -ftest-coverage -O0
 
 # Directories
-SRC_DIR = ../src
-TEST_DIR = ./
-UNITY_DIR = ../libraries/Unity/src
+SRC_DIR = src
+TEST_DIR = test
+UNITY_DIR = libraries/Unity/src
 
 # Source files and objects
 SRCS = $(wildcard $(SRC_DIR)/**/*.c)

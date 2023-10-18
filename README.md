@@ -1,4 +1,5 @@
 ![CI Status](https://github.com/polesskiy-dev/active-object-fsm/actions/workflows/ci.yml/badge.svg?branch=main)
+[![codecov](https://codecov.io/gh/polesskiy-dev/active-object-fsm/graph/badge.svg?token=0MO4ODZ1HA)](https://codecov.io/gh/polesskiy-dev/active-object-fsm)
 [![Documentation](https://img.shields.io/badge/docs-Doxygen-blue.svg)](https://polesskiy-dev.github.io/active-object-fsm/)
 ![GitHub release (with filter)](https://img.shields.io/github/v/release/polesskiy-dev/active-object-fsm)
 
@@ -54,10 +55,9 @@ $ brew install graphviz # install Graphviz (MacOS)
 $ for file in ./**/*.gv; do dot -Tsvg "$file" > "${file%.gv}.svg"; done # dot -Tsvg file.gv > file.svg  
 ```
 
-### TODO: Code coverage
+## Code coverage
 
-Based on [Codecov](https://about.codecov.io/):
+[Codecov](https://about.codecov.io/) Graph:
 
-[How to Set Up Codecov with C and GitHub Actions in 2022](https://about.codecov.io/blog/how-to-set-up-codecov-with-c-and-github-actions/)
-
+![codecov](https://codecov.io/gh/polesskiy-dev/active-object-fsm/graphs/sunburst.svg?token=0MO4ODZ1HA)
 
