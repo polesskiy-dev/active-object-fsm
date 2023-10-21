@@ -4,6 +4,25 @@
 const TState emptyState = EMPTY_STATE;
 const TState invalidState = INVALID_STATE;
 
+/** @brief Executes a hook if it exists */
+static inline bool _executeHook(TStateHook hook, TActiveObject *activeObject);
+
+/** @brief Validates input args for {@see FSM_ProcessEventToNextStateFromTransitionTable} */
+static inline bool _IsValidArgsProcessEventToNextStateFromTransitionTable(
+        TActiveObject
+        *const activeObject,
+        TEvent event,
+        uint32_t
+        statesMax,
+        uint32_t eventsMax,
+        const TEventHandler transitionTable[statesMax][eventsMax]
+);
+
+/** @brief Validates input args for {@see FSM_TraverseAOToNextState} */
+static inline bool _IsValidArgsTraverseAOToNextState(
+        TActiveObject *const activeObject,
+        const TState *const nextState);
+
 inline bool FSM_IsEqualStates(const TState *const stateA, const TState *const stateB) {
     return stateA->name == stateB->name;
 };
@@ -20,22 +39,17 @@ const TState *FSM_ProcessEventToNextStateFromTransitionTable(
         const TEventHandler transitionTable[statesMax][eventsMax]) {
 
     /* Validate input args */
+    if (!_IsValidArgsProcessEventToNextStateFromTransitionTable(activeObject,
+                                                                event,
+                                                                statesMax,
+                                                                eventsMax,
+                                                                transitionTable))
+        return &invalidState;
 
-    // Validate Active object
-    if (NULL == activeObject
-        || NULL == transitionTable)
-        return &invalidState; // Handle null pointers as needed
-
-    const TState *const currState = activeObject->state;
-
-    // Validate current state
-    if (currState->name < 0 || currState->name >= statesMax) return &invalidState;
-
-    // Validate current event
-    if (event.sig < 0 || event.sig >= eventsMax) return &invalidState;
+    uint32_t currStateName = activeObject->state->name;
 
     // Lookup transition table to find the handler for the current state and event
-    const TEventHandler eventHandler = transitionTable[currState->name][event.sig];
+    const TEventHandler eventHandler = transitionTable[currStateName][event.sig];
 
     // Call the handler to get the next state and make side effects
     if (eventHandler) {
@@ -48,26 +62,10 @@ const TState *FSM_ProcessEventToNextStateFromTransitionTable(
     return &emptyState;
 };
 
-// Execute a state hook and return its status.
-static bool _executeHook(TStateHook hook, TActiveObject *activeObject) {
-    if (hook) {
-        return hook(activeObject, NULL);
-    }
-    return true; // No hook to execute, so consider it successful
-}
-
 bool FSM_TraverseAOToNextState(
         TActiveObject *const activeObject,
         const TState *const nextState) {
-    // Null args checks
-    if (!activeObject || !nextState) {
-        return false;
-    }
-
-    // Validate next state
-    if (!FSM_IsValidState(nextState)) {
-        return false;
-    }
+    if (!_IsValidArgsTraverseAOToNextState(activeObject, nextState)) return false;
 
     const TState *currState = &(*activeObject->state);
 
@@ -91,3 +89,49 @@ bool FSM_TraverseAOToNextState(
 
     return true;
 };
+
+static bool _executeHook(TStateHook hook, TActiveObject *activeObject) {
+    if (hook) {
+        return hook(activeObject, NULL);
+    }
+    return true; // No hook to execute, so consider it successful
+}
+
+static inline bool _IsValidArgsProcessEventToNextStateFromTransitionTable(
+        TActiveObject
+        *const activeObject,
+        TEvent event,
+        uint32_t
+        statesMax,
+        uint32_t eventsMax,
+        const TEventHandler transitionTable[statesMax][eventsMax]
+) {
+    // Validate Active object
+    if (NULL == activeObject
+        || NULL == transitionTable)
+        return false;
+
+    // Validate current state
+    if (activeObject->state->name < 0 || activeObject->state->name >= statesMax) return false;
+
+    // Validate current event
+    if (event.sig < 0 || event.sig >= eventsMax) return false;
+
+    return true;
+}
+
+static inline bool _IsValidArgsTraverseAOToNextState(
+        TActiveObject *const activeObject,
+        const TState *const nextState) {
+    // Null args checks
+    if (!activeObject || !nextState) {
+        return false;
+    }
+
+    // Validate next state
+    if (!FSM_IsValidState(nextState)) {
+        return false;
+    }
+
+    return true;
+}
