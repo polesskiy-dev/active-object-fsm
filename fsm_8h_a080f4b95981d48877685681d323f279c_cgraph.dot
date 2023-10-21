@@ -1,0 +1,16 @@
+digraph "FSM_TraverseAOToNextState"
+{
+ // LATEX_PDF_SIZE
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  rankdir="LR";
+  Node1 [label="FSM_TraverseAOToNextState",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled", fontcolor="black",tooltip="Transitions the Active Object to the next state."];
+  Node1 -> Node2 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="_executeHook",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$fsm_8c.html#a53f185086c432dbb521cb4e091ae2a48",tooltip="Executes a hook if it exists."];
+  Node1 -> Node3 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node3 [label="_IsValidArgsTraverseAOTo\lNextState",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$fsm_8c.html#a500777aa43b869ba3aee6c232004adf4",tooltip="Validates input args for {."];
+  Node3 -> Node4 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node4 [label="FSM_IsValidState",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$fsm_8c.html#abc83f1aa20427dbb0c65718be63f505b",tooltip="Checks if a state is valid (i.e., not an empty or invalid state)."];
+  Node1 -> Node5 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node5 [label="FSM_IsEqualStates",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$fsm_8c.html#aa644f3045a101987e1058a6ad824f8c3",tooltip="Checks if two states are equal based on their name."];
+}

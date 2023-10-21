@@ -1,0 +1,15 @@
+digraph "EventQueue_IsEmpty"
+{
+ // LATEX_PDF_SIZE
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  rankdir="RL";
+  Node1 [label="EventQueue_IsEmpty",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled", fontcolor="black",tooltip="Check if the queue is empty."];
+  Node1 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="ActiveObject_ProcessQueue",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$active__object_8c.html#a694b95cde0a304a9089bc47deec685be",tooltip="Process the queue of the active object and return an event."];
+  Node1 -> Node3 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node3 [label="EventQueue_Dequeue",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$event__queue_8c.html#a82710df8bc477fb59cc9a5ed76f49b35",tooltip="Dequeue an event from the queue."];
+  Node3 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node1 -> Node4 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node4 [label="EventQueue_Peek",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$event__queue_8c.html#a76a0745d2c02321cbe3ff416c9424562",tooltip="Peek the front event without removing it."];
+}

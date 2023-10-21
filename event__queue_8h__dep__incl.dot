@@ -1,0 +1,18 @@
+digraph "src/event_queue/event_queue.h"
+{
+ // LATEX_PDF_SIZE
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  Node1 [label="src/event_queue/event\l_queue.h",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled", fontcolor="black",tooltip="Template Queue for a given data type."];
+  Node1 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="src/active_object/active\l_object.h",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$active__object_8h.html",tooltip="Active Object Design Pattern Implementation."];
+  Node2 -> Node3 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node3 [label="src/active_object/active\l_object.c",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$active__object_8c.html",tooltip=" "];
+  Node2 -> Node4 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node4 [label="src/fsm/fsm.c",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$fsm_8c.html",tooltip=" "];
+  Node2 -> Node5 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node5 [label="src/fsm/fsm.h",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$fsm_8h.html",tooltip="FSM for Active Object - A Hybrid of Mealy and Moore State Machines."];
+  Node5 -> Node4 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node1 -> Node6 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node6 [label="src/event_queue/event\l_queue.c",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$event__queue_8c.html",tooltip=" "];
+}
